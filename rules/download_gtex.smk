@@ -2,7 +2,7 @@ rule download_gtex_expr_matrices:
   params:
     gtex_expr_mat_url="https://storage.googleapis.com/gtex_analysis_v8/single_tissue_qtl_data/GTEx_Analysis_v8_eQTL_expression_matrices.tar"
   output: "{results_dir}/gtex_v8/data/download/GTEx_Analysis_v8_eQTL_expression_matrices.tar" # temp("")
-  group: "gtex_download"
+  group: "gtex_expr_download"
   shell:
     """
     curl {params.gtex_expr_mat_url} -o {output}
@@ -11,7 +11,7 @@ rule download_gtex_expr_matrices:
 rule extract_gtex_expr_matrices:
   input: expand("{results_dir}/gtex_v8/data/download/GTEx_Analysis_v8_eQTL_expression_matrices.tar", results_dir = config['results_dir'])
   output: expand("{results_dir}/gtex_v8/data/GTEx_Analysis_v8_eQTL_expression_matrices/{tissue}.v8.normalized_expression.bed.gz", results_dir = config['results_dir'], tissue = config['tissues'])
-  group: "gtex_extract"
+  group: "gtex_expr_download"
   shell:
     """
     tar -xvf {input} -C "{results_dir}/gtex_v8/data"
@@ -20,7 +20,7 @@ rule extract_gtex_expr_matrices:
 rule extract_gtex_expr_matrix:
   input: "{results_dir}/gtex_v8/data/GTEx_Analysis_v8_eQTL_expression_matrices/{tissue}.v8.normalized_expression.bed.gz"
   output: "{results_dir}/gtex_v8/data/normalized/{tissue}.normalized.txt"
-  group: "gtex_extract"
+  group: "gtex_expr_download"
   shell:
     """
     #gzip -cd "{input}" > "{output}"
@@ -32,7 +32,7 @@ rule download_gtex_tpm:
   params:
     gtex_tpm_url="https://storage.googleapis.com/gtex_analysis_v8/rna_seq_data/GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_tpm.gct.gz"
   output: "{results_dir}/gtex_v8/data/download/GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_tpm.gct.gz" # temp
-  group: "gtex_download"
+  group: "gtex_tpm_download"
   shell:
     """
     curl {params.gtex_tpm_url} -o {output}
@@ -42,7 +42,7 @@ rule download_gtex_sample_annot:
   params:
     gtex_sample_annot_url="https://storage.googleapis.com/gtex_analysis_v8/annotations/GTEx_Analysis_v8_Annotations_SampleAttributesDS.txt"
   output: "{results_dir}/gtex_v8/data/download/GTEx_Analysis_v8_Annotations_SampleAttributesDS.txt" # temp
-  group: "gtex_download"
+  group: "gtex_tpm_download"
   shell:
     """
     curl {params.gtex_sample_annot_url} -o {output}
@@ -54,7 +54,7 @@ rule extract_gtex_tpm:
     tpm=expand("{results_dir}/gtex_v8/data/download/GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_tpm.gct.gz", results_dir = config['results_dir'], tissue = config['tissues']),
     annot=expand("{results_dir}/gtex_v8/data/download/GTEx_Analysis_v8_Annotations_SampleAttributesDS.txt", results_dir = config['results_dir'], tissue = config['tissues'])
   output: expand("{results_dir}/gtex_v8/data/raw_tpm/{tissue}.txt", results_dir = config['results_dir'], tissue = config['tissues'])
-  group: "gtex_extract"
+  group: "gtex_tpm_download"
   shell:
     """
     python src/tissuewise_categorize_tpm_data.py \
@@ -70,7 +70,7 @@ rule download_gtex_cov:
   params:
     gtex_cov_url="https://storage.googleapis.com/gtex_analysis_v8/single_tissue_qtl_data/GTEx_Analysis_v8_eQTL_covariates.tar.gz"
   output: "{results_dir}/gtex_v8/data/download/GTEx_Analysis_v8_eQTL_covariates.tar.gz"
-  group: "gtex_download"
+  group: "gtex_cov_download"
   shell:
     """
     curl {params.gtex_cov_url} -o {output}
@@ -80,7 +80,7 @@ rule download_gtex_cov:
 rule extract_gtex_cov:
   input: expand("{results_dir}/gtex_v8/data/download/GTEx_Analysis_v8_eQTL_covariates.tar.gz", results_dir = config['results_dir'])
   output: expand("{results_dir}/gtex_v8/data/GTEx_Analysis_v8_eQTL_covariates/{tissue}.v8.covariates.txt", results_dir = config['results_dir'], tissue = config['tissues'])
-  group: "gtex_extract"
+  group: "gtex_cov_download"
   shell:
     """
     tar -zxvf {input} -C "{results_dir}/gtex_v8/data"
