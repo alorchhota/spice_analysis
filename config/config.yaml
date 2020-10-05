@@ -1,0 +1,18 @@
+results_dir: "/Users/ashissaha/github/spice_analysis/results/spice_results"
+annot_fn: "/work-zfs/abattle4/ashis/progdata/scnet/gtex_v8_net/misc/gencode.v26.annotation.gene.txt"
+
+pathways:
+  hallmark: "/work-zfs/abattle4/lab_data/gsea_data/h.all.v6.1.symbols.gmt"
+  kegg: "/work-zfs/abattle4/lab_data/gsea_data/c2.cp.kegg.v6.1.symbols.gmt"
+  go: "/work-zfs/abattle4/lab_data/gsea_data/c5.all.v6.1.symbols.gmt"  # update the link
+  cp: "/work-zfs/abattle4/lab_data/gsea_data/c2.cp.v6.1.symbols.gmt"
+
+tissues: ['Whole_Blood', "Muscle_Skeletal"]
+
+correction_labels: ["corrected"]
+n_genes: [500, 1500]
+gene_selection: ["AXPVAR"]
+methods: ["wgcna", "spice"]
+
+# change file?
+crossmap_file: "/work-zfs/abattle4/lab_data/annotation/mappability_hg38_gencode26/hg38_cross_mappability_strength_symmetric_mean_sorted.txt"

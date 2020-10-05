@@ -1,0 +1,18 @@
+__default__:
+  partition: debug
+  nodes: 1
+  ntasks: 1
+  time: 30  # min
+  output: "{wildcards.result_dir}/logs/{rule}/slurm-%j.out"
+  error: "{wildcards.result_dir}/logs/{rule}/slurm-%j.out"
+  job-name: "{rule}"
+
+create_file:
+  #time: 5
+  #time: "{wildcards.n}"
+  #ntasks: 1
+  time: "{params.t}"
+  #output: "results/snakemake_test/{wildcards.n}"
+  #error: "results/snakemake_test/{wildcards.n}"
+  #output: "results/snakemake_test/{rule}.{wildcards}.out"
+  #error: "results/snakemake_test/{rule}.{wildcards}.err"
