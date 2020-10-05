@@ -1,5 +1,9 @@
 results_dir: "/Users/ashissaha/github/spice_analysis/results/spice_results"
-annot_fn: "/work-zfs/abattle4/ashis/progdata/scnet/gtex_v8_net/misc/gencode.v26.annotation.gene.txt"
+gene_annot: "/Users/ashissaha/github/scnet/data/gencode.v26.annotation.gene.txt"
+
+#results_dir: "/work-zfs/abattle4/ashis/progres/spice_anlysis"
+#gene_annot: "/work-zfs/abattle4/ashis/progdata/scnet/gtex_v8_net/misc/gencode.v26.annotation.gene.txt"
+
 
 pathways:
   hallmark: "/work-zfs/abattle4/lab_data/gsea_data/h.all.v6.1.symbols.gmt"

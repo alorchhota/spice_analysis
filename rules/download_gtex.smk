@@ -19,11 +19,10 @@ rule extract_gtex_expr_matrices:
     
 rule extract_gtex_expr_matrix:
   input: "{results_dir}/gtex_v8/data/GTEx_Analysis_v8_eQTL_expression_matrices/{tissue}.v8.normalized_expression.bed.gz"
-  output: "{results_dir}/gtex_v8/data/normalized/{tissue}.normalized.txt"
+  output: "{results_dir}/gtex_v8/data/normalized/{tissue}.txt"
   group: "gtex_expr_download"
   shell:
     """
-    #gzip -cd "{input}" > "{output}"
     gzip -cd "{input}" | cut -f4- > "{output}"
     """
 
