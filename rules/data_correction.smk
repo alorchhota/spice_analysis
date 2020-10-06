@@ -5,6 +5,8 @@ rule rm_cov_from_expr:
   output:
     "{results_dir}/gtex_v8/data/covariates_removed/{tissue}.txt"
   group: "correct_data"
+  log: 
+    "{results_dir}/gtex_v8/logs/rm_cov_from_expr/{tissue}.log"
   shell:
     """
     Rscript src/rm_cov_from_expr.R \
@@ -22,6 +24,8 @@ rule process_corrected_expr:
     annot=config["gene_annot"]
   output:
     "{results_dir}/gtex_v8/data/corrected/{tissue}.corrected.{gene_selection}.{n_genes}.txt"
+  log: 
+    "{results_dir}/gtex_v8/logs/process_corrected_expr/{tissue}.corrected.{gene_selection}.{n_genes}.log"
   shell:
     """
     Rscript src/process_corrected_data.R \
@@ -33,3 +37,4 @@ rule process_corrected_expr:
       --qnorm TRUE \
       --o {output}
     """
+
