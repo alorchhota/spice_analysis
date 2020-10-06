@@ -120,7 +120,8 @@ for i in range(len(col_titles)):
 
 print('creating one file per tissue ...')
 def get_file_name(tissue, dir=out_dir):
-    s = re.sub('[^0-9a-zA-Z\-]+', ' ', tissue)
+    s = re.sub(' - ', ' ', tissue)
+    s = re.sub('[^0-9a-zA-Z\-]+', ' ', s)
     s = re.sub('[ ]+', '_', s.lstrip().rstrip())
     return os.path.join(dir, s + '.txt')
 
