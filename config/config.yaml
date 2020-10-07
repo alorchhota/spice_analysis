@@ -1,8 +1,12 @@
 results_dir: "/Users/ashissaha/github/spice_analysis/results/spice_results"
 gene_annot: "/Users/ashissaha/github/scnet/data/gencode.v26.annotation.gene.txt"
+# crossmap: "/work-zfs/abattle4/lab_data/annotation/mappability_hg38_gencode26/hg38_cross_mappability_strength_symmetric_mean_sorted.txt"
 
 #results_dir: "/work-zfs/abattle4/ashis/progres/spice_anlysis"
 #gene_annot: "/work-zfs/abattle4/ashis/progdata/scnet/gtex_v8_net/misc/gencode.v26.annotation.gene.txt"
+#crossmap: "/work-zfs/abattle4/lab_data/annotation/mappability_hg38_gencode26/hg38_cross_mappability_strength_symmetric_mean_sorted.txt"
+
+crossmap_threshold: 0
 
 
 pathways:
@@ -33,9 +37,13 @@ tissues: ['Adipose_Subcutaneous', 'Adipose_Visceral_Omentum', 'Adrenal_Gland',
           'Testis', 'Thyroid', 'Uterus', 'Vagina', 'Whole_Blood']
 
 correction_labels: ["corrected"]
-n_genes: [500, 1500]
+n_genes: [500, 1500, 5000]
 gene_selection: ["AXPVAR"]
 methods: ["wgcna", "spice"]
 
-# change file?
-crossmap_file: "/work-zfs/abattle4/lab_data/annotation/mappability_hg38_gencode26/hg38_cross_mappability_strength_symmetric_mean_sorted.txt"
+
+validation_tissues: ['Whole_Blood', "Muscle_Skeletal"]
+validation_correction_labels: ["corrected"]
+validation_n_genes: [1500]
+validation_gene_selection: ["AXPVAR"]
+validation_methods: ["pearson", "wgcna_unsigned", "spice_Mp_G.8_Ra_A1", "genie3", "mrnetb"]

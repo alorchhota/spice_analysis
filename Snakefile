@@ -5,9 +5,12 @@ if "cluster" in socket.gethostname():
 configfile: "config/config.yaml"
 results_dir = config["results_dir"]
 
+
 rule all:
   input:
-    expand("{results_dir}/gtex_v8/data/corrected/{tissue}.corrected.{gene_selection}.{n_genes}.txt", results_dir = config['results_dir'], tissue = config['tissues'], gene_selection=config['gene_selection'], n_genes=config['n_genes'])
+    expand("{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_network.rds", results_dir = config['results_dir'], tissue = config['validation_tissues'], correction_label = config['validation_correction_labels'], gene_selection=config['validation_gene_selection'], n_genes=config['validation_n_genes'], method = config['validation_methods'])
 
 include: "rules/download_gtex.smk"
+include: "rules/download_resources.smk"
 include: "rules/data_correction.smk"
+include: "rules/run_networks.smk"
