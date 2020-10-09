@@ -1,6 +1,4 @@
-import socket
-if "cluster" in socket.gethostname():
-  shell.prefix("module load R/4.0.2; ")
+shell.prefix("module load R/4.0.2; ")  # load modules in marcc. may produce error message in other systems.
 
 configfile: "config/config.yaml"
 results_dir = config["results_dir"]

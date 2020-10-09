@@ -10,4 +10,5 @@ __default__:
 run_gtex_network:
   time: "{params.runtime}"
   ntasks: "{params.thread}"
-  
+  job-name: "{wildcards.method}"
+ 

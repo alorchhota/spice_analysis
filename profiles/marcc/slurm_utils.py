@@ -107,8 +107,9 @@ def convert_job_properties(job_properties, resource_mapping={}):
     for k, v in resource_mapping.items():
         options.update({k: resources[i] for i in v if i in resources})
 
-    if "threads" in job_properties:
-        options["cpus-per-task"] = job_properties["threads"]
+    # commenting to avoid problems in marcc because of cpus-per-task property
+    #if "threads" in job_properties:
+    #    options["cpus-per-task"] = job_properties["threads"]
     return options
 
 
