@@ -424,7 +424,7 @@ get_wgcna_net <- function(expr_mat,
   }
   
   if(ncol(expr_mat) < 5000){
-    connectivity=as.vector(apply(net,2,sum, na.rm=T))  # -1 for diagonals
+    connectivity=as.vector(apply(net,2,sum, na.rm=T))
   } else {
     sf_block_size = ifelse(is.numeric(blockSize), blockSize, 1500)
     connectivity=softConnectivity(datExpr = expr_mat, corFnc = "cor", 
