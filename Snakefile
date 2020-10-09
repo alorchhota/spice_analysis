@@ -1,6 +1,6 @@
 import socket
 if "cluster" in socket.gethostname():
-  shell.prefix("module load R; ")
+  shell.prefix("module load R/4.0.2; ")
 
 configfile: "config/config.yaml"
 results_dir = config["results_dir"]
