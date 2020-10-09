@@ -71,5 +71,5 @@ rule run_gtex_network:
       --cross "{input.cross}" \
       --cross_th {params.cross_th} \
       --old_glasso TRUE \
-      --o "{params.outdir}"
+      --o "{params.outdir}" 2>&1 | tee {log}
     """
