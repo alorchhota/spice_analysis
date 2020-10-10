@@ -451,7 +451,7 @@ run_glasso_likelihood <- function(){
 
 # 'glasso_5k', 'glasso_10k', 'glasso_25k', 'glasso_50k',
 
-run_glasso_net_optimized_by_n_edge_generic <- function(expr_df){
+run_glasso_net_optimized_by_n_edge_generic <- function(){
   lambda.max = 0.5
   lambda.min = 0.05
   lambda.interval = 0.05
