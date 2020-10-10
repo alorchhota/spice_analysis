@@ -8,6 +8,10 @@ gene_annot: "/Users/ashissaha/github/scnet/data/gencode.v26.annotation.gene.txt"
 
 crossmap_threshold: 0
 
+string:
+  version: "11"
+  species: 9606
+  max_homology: 60
 
 pathways:
   hallmark: "/work-zfs/abattle4/lab_data/gsea_data/h.all.v6.1.symbols.gmt"
