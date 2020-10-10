@@ -33,8 +33,14 @@ n.cores = argv$thread
 data_sep = '\t'
 
 ### process arguments
-implemented_methods = c('wgcna_signed', 'wgcna_unsigned', 'pearson', 'spearman', 
+implemented_methods = c('wgcna_pearson_unsigned_0.6', 'wgcna_pearson_unsigned_0.7', 'wgcna_pearson_unsigned_0.8', 'wgcna_pearson_unsigned_0.9', 
+                        'wgcna_pearson_signed_0.6', 'wgcna_pearson_signed_0.7', 'wgcna_pearson_signed_0.8', 'wgcna_pearson_signed_0.9',
+                        'wgcna_spearman_unsigned_0.6', 'wgcna_spearman_unsigned_0.7', 'wgcna_spearman_unsigned_0.8', 'wgcna_spearman_unsigned_0.9', 
+                        'wgcna_spearman_signed_0.6', 'wgcna_spearman_signed_0.7', 'wgcna_spearman_signed_0.8', 'wgcna_spearman_signed_0.9',
+
+                        'pearson', 'spearman', 
                         # 'pearson_rp', 'spearman_rp',
+                        
                         'genie3', 'et_genie3',
                         
                         'aracne_spearman_e0_freq', 'aracne_spearman_e.05_freq', 'aracne_spearman_e.1_freq',
@@ -136,30 +142,72 @@ get_crossmap_mat <- function(crossmap_fn, annot_fn){
 
 ######## network reconstruction methods ######
 ##### wgcna methods #####
-# 'wgcna_signed', 'wgcna_unsigned', 'pearson', 'spearman'
-run_wgcna_signed <- function(){
-  wgcna_dir = create_wgcna_dir()
+# 'wgcna_pearson_unsigned_0.6', 'wgcna_pearson_unsigned_0.7', 'wgcna_pearson_unsigned_0.8', 'wgcna_pearson_unsigned_0.9', 
+# 'wgcna_pearson_signed_0.6', 'wgcna_pearson_signed_0.7', 'wgcna_pearson_signed_0.8', 'wgcna_pearson_signed_0.9',
+# 'wgcna_spearman_unsigned_0.6', 'wgcna_spearman_unsigned_0.7', 'wgcna_spearman_unsigned_0.8', 'wgcna_spearman_unsigned_0.9', 
+# 'wgcna_spearman_signed_0.6', 'wgcna_spearman_signed_0.7', 'wgcna_spearman_signed_0.8', 'wgcna_spearman_signed_0.9',
+
+run_wgcna_generic <- function(){
+  wgcna.method = NULL
+  if(grepl(pattern = "_spearman_", x = method, fixed = TRUE)){
+    wgcna.method = "spearman"
+  } else if(grepl(pattern = "_pearson_", x = method, fixed = TRUE)){
+    wgcna.method = "pearson"
+  } else {
+    stop("wgcna method not implemented: check wgcna.method")
+  }
+  
+  r2 = NULL
+  if(grepl(pattern = "_0.6", x = method, fixed = TRUE)){
+    r2 = 0.6
+  } else if(grepl(pattern = "_0.7", x = method, fixed = TRUE)){
+    r2 = 0.7
+  } else if(grepl(pattern = "_0.8", x = method, fixed = TRUE)){
+    r2 = 0.8
+  } else if(grepl(pattern = "_0.9", x = method, fixed = TRUE)){
+    r2 = 0.9
+  } else {
+    stop("wgcna method not implemented: check r2")
+  }
+  
+  wgcna.type = NULL
+  if(grepl(pattern = "_unsigned_", x = method, fixed = TRUE)){
+    wgcna.type = "unsigned"
+  } else if(grepl(pattern = "_signed_", x = method, fixed = TRUE)){
+    wgcna.type = "signed"
+  } else {
+    stop("wgcna method not implemented: check wgcna.type")
+  }
+  
   net <- get_wgcna_net(expr_mat = expr_df, 
-                       out.pfx = sprintf("%s/wgcna_signed", wgcna_dir), 
-                       type = "signed", 
-                       RsquaredCut = 0.8, 
+                       method = wgcna.method,
+                       type = wgcna.type,
+                       RsquaredCut = r2, 
                        verbose = T)
   net <- abs(net)  # absolute value
   net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
-run_wgcna_unsigned <- function(){
-  wgcna_dir = create_wgcna_dir()
-  net <- get_wgcna_net(expr_mat = expr_df, 
-                       out.pfx = sprintf("%s/wgcna_unsigned", wgcna_dir), 
-                       type = "unsigned", 
-                       RsquaredCut = 0.8, 
-                       verbose = T)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
-  return(net)
-}
+run_wgcna_pearson_unsigned_0.6 = run_wgcna_generic 
+run_wgcna_pearson_unsigned_0.7 = run_wgcna_generic 
+run_wgcna_pearson_unsigned_0.8 = run_wgcna_generic 
+run_wgcna_pearson_unsigned_0.9 = run_wgcna_generic
+
+run_wgcna_pearson_signed_0.6 = run_wgcna_generic 
+run_wgcna_pearson_signed_0.7 = run_wgcna_generic 
+run_wgcna_pearson_signed_0.8 = run_wgcna_generic 
+run_wgcna_pearson_signed_0.9 = run_wgcna_generic
+
+run_wgcna_spearman_unsigned_0.6 = run_wgcna_generic 
+run_wgcna_spearman_unsigned_0.7 = run_wgcna_generic 
+run_wgcna_spearman_unsigned_0.8 = run_wgcna_generic 
+run_wgcna_spearman_unsigned_0.9 = run_wgcna_generic
+
+run_wgcna_spearman_signed_0.6 = run_wgcna_generic 
+run_wgcna_spearman_signed_0.7 = run_wgcna_generic 
+run_wgcna_spearman_signed_0.8 = run_wgcna_generic 
+run_wgcna_spearman_signed_0.9 = run_wgcna_generic
 
 ##### correlation methods #####
 run_pearson <- function(){

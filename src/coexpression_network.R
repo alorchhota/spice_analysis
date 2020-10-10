@@ -368,7 +368,8 @@ get_glasso_net_optimized_by_edge_count <- function(expr_df,
 
 
 get_wgcna_net <- function(expr_mat, 
-                          out.pfx,
+                          out.pfx = NULL,
+                          method = 'pearson',
                           type = 'unsigned',
                           RsquaredCut = 0.8,
                           powerVector = c(seq(1, 10, by = 1), seq(12, 20, by = 2)), 
@@ -380,20 +381,23 @@ get_wgcna_net <- function(expr_mat,
   require('WGCNA')
   
   # expression data
-  stopifnot(class(expr_mat) %in% c('data.frame', 'matrix') )
+  stopifnot(is.data.frame(expr_mat) || is.matrix(expr_mat))
   stopifnot(type %in% c('signed', 'unsigned'))
   expr_mat = t(expr_mat)  # sample x gene matrix
   
   ### compute similarity
   if(sum(!is.finite(expr_mat)) > 0){
-    similarity_mat = cor(expr_mat, use = 'pairwise.complete.obs', method = 'pearson')
+    similarity_mat = cor(expr_mat, use = 'pairwise.complete.obs', method = method)
   } else {
-    similarity_mat = cor(expr_mat, use = 'all.obs', method = 'pearson')
+    similarity_mat = cor(expr_mat, use = 'all.obs', method = method)
   }
   if(sum(is.na(similarity_mat)) > 0)
     similarity_mat[is.na(similarity_mat)] = 0
-  if (type == 'unsigned')
+  if (type == 'unsigned'){
     similarity_mat = abs(similarity_mat)
+  } else {
+    similarity_mat = 0.5 * (1+similarity_mat)
+  }
   
   ### estimate power
   threshold = pickSoftThreshold(data = similarity_mat, 
@@ -410,49 +414,47 @@ get_wgcna_net <- function(expr_mat,
   scaleFreeFit = threshold$fitIndices
   
   if(is.na(powerEstimate)){
-    # save data before returning error
-    data_fn = sprintf("%s_wgcna_scale_free.RData", out.pfx)
-    save(powerEstimate, scaleFreeFit, file = data_fn)
-    stop(sprintf('could not pick a threshold for R^2 >= %s. max R^2 is %s', RsquaredCut, max(scaleFreeFit[,2])))
+    warning(sprintf('could not pick a threshold for R^2 >= %s. picking a threshold with max R^2 = %s', RsquaredCut, max(scaleFreeFit[,2])))
+    powerEstimate = scaleFreeFit$Power[which.max(scaleFreeFit$SFT.R.sq)]
   }
+  
+  net=similarity_mat^powerEstimate
   
   ### compute connectivity
-  if(type == 'signed'){
-    net = (0.5 * (1+similarity_mat) )^powerEstimate
+  sf_block_size = ifelse(is.numeric(blockSize), blockSize, 5000)
+  if(ncol(expr_mat) <= sf_block_size){
+    connectivity=as.vector(apply(net,2,sum, na.rm=T)) - 1  # -1 for diagonals
   } else {
-    net=similarity_mat^powerEstimate
-  }
-  
-  if(ncol(expr_mat) < 5000){
-    connectivity=as.vector(apply(net,2,sum, na.rm=T))
-  } else {
-    sf_block_size = ifelse(is.numeric(blockSize), blockSize, 1500)
-    connectivity=softConnectivity(datExpr = expr_mat, corFnc = "cor", 
+    connectivity=softConnectivity(datExpr = expr_mat, 
+                                  corFnc = "cor", 
+                                  corOptions = sprintf("use = 'p', method = '%s'", method),
                                   type = type,
                                   power = powerEstimate, 
                                   blockSize = sf_block_size, 
                                   verbose = verbose)
   }
-  
-  ### save data
-  data_fn = sprintf("%s_wgcna_scale_free.RData", out.pfx)
-  save(powerEstimate, scaleFreeFit, connectivity, file = data_fn)
-  
-  ### plot
-  plt_fn = sprintf("%s_wgcna_scale_free.pdf", out.pfx)
-  pdf(plt_fn)
-  
-  plot(scaleFreeFit[,1], -sign(scaleFreeFit[,3])*scaleFreeFit[,2],xlab="Soft Threshold (power)",ylab="R^2",type="b", pch = 20)
-  points(scaleFreeFit[,1], -sign(scaleFreeFit[,3])*scaleFreeFit[,2], type = "p", pch = 19, col="white")
-  text(scaleFreeFit[,1], -sign(scaleFreeFit[,3])*scaleFreeFit[,2], labels=as.character(scaleFreeFit[,1]))
-  abline(h=RsquaredCut,col="red")
-  plot(scaleFreeFit[,1], scaleFreeFit[,5], xlab="Soft Threshold (power)", ylab="Mean Connectivity", type="b", pch = 20)
-  points(scaleFreeFit[,1], scaleFreeFit[,5], type = "p", pch = 19, col="white")
-  text(scaleFreeFit[,1], scaleFreeFit[,5], labels = as.character(scaleFreeFit[,1]))
-  
-  hist(connectivity, main = sprintf("Connectivity with power=%s", powerEstimate), xlab = "Connectivity", breaks = nBreaks)
-  scaleFreePlot(connectivity, main= sprintf("Scale-free topology: power=%s\n", powerEstimate))
-  dev.off()
+
+  if(!is.null(out.pfx)){
+    ### save data
+    data_fn = sprintf("%s_wgcna_scale_free.RData", out.pfx)
+    save(powerEstimate, scaleFreeFit, connectivity, file = data_fn)
+    
+    ### plot
+    plt_fn = sprintf("%s_wgcna_scale_free.pdf", out.pfx)
+    pdf(plt_fn)
+    
+    plot(scaleFreeFit[,1], -sign(scaleFreeFit[,3])*scaleFreeFit[,2],xlab="Soft Threshold (power)",ylab="R^2",type="b", pch = 20)
+    points(scaleFreeFit[,1], -sign(scaleFreeFit[,3])*scaleFreeFit[,2], type = "p", pch = 19, col="white")
+    text(scaleFreeFit[,1], -sign(scaleFreeFit[,3])*scaleFreeFit[,2], labels=as.character(scaleFreeFit[,1]))
+    abline(h=RsquaredCut,col="red")
+    plot(scaleFreeFit[,1], scaleFreeFit[,5], xlab="Soft Threshold (power)", ylab="Mean Connectivity", type="b", pch = 20)
+    points(scaleFreeFit[,1], scaleFreeFit[,5], type = "p", pch = 19, col="white")
+    text(scaleFreeFit[,1], scaleFreeFit[,5], labels = as.character(scaleFreeFit[,1]))
+    
+    hist(connectivity, main = sprintf("Connectivity with power=%s", powerEstimate), xlab = "Connectivity", breaks = nBreaks)
+    scaleFreePlot(connectivity, main= sprintf("Scale-free topology: power=%s\n", powerEstimate))
+    dev.off()  
+  }
 
   return(net)
 }
