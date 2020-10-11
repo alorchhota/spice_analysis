@@ -8,7 +8,6 @@ rule download_string_ppi:
     ppi_file = "{results_dir}/shared_data/dependency_ppi_{species}.rds"
   log: 
     "{results_dir}/logs/download_string_ppi/download_string_ppi_{species}.log"
-  group: "download_string"
   shell:
     """
     printf "TP53\nRBM3\nSF3\nLIM12\nATM\nTMEM160\nBCL2L1\nMDM2\nEGFR\nCD96\nKEAP1\nSRSF1\nTSEN2" > "{params.gene_file}"
@@ -30,7 +29,6 @@ rule generate_gene_file:
     "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/genes.txt"
   log:
     "{results_dir}/gtex_v8/logs/generate_gene_file/{correction_label}/{tissue}.{correction_label}.{gene_selection}.{n_genes}.generate_gene_file.log"
-  group: "download_string"
   shell:
     """
     cut -f1 "{input}" | tail -n +2 > "{output}"
@@ -51,7 +49,6 @@ rule get_string_ppi:
     ppi_file = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/string_ppi.rds"
   log: 
     "{results_dir}/gtex_v8/logs/get_string_ppi/{correction_label}/{tissue}.{correction_label}.{gene_selection}.{n_genes}.log"
-  group: "download_string"
   shell:
     """
     Rscript src/prepare_string_ppi_matrix.R \
