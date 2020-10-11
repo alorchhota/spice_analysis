@@ -7,6 +7,7 @@ gene_annot: "/Users/ashissaha/github/scnet/data/gencode.v26.annotation.gene.txt"
 #crossmap: "/work-zfs/abattle4/lab_data/annotation/mappability_hg38_gencode26/hg38_cross_mappability_strength_symmetric_mean_sorted.txt"
 
 crossmap_threshold: 0
+random_seed: 101
 
 string:
   version: "11"

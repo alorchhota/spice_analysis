@@ -15,7 +15,7 @@ get_genie3_net <- function(expr_mat,
     expr_mat = as.matrix(expr_mat)
   
   # set seed
-  if(!is.null(seed) && !is.na(seed))
+  if(!is.null(seed) && !is.na(seed) && is.finite(seed))
     set.seed(seed)
   
   # construct weight matrices
@@ -90,7 +90,7 @@ get_rlowpc_net <- function(expr_df){
 }
 
 get_random_net <- function(expr_df, seed = NULL, directed = F){
-  if (is.integer(seed))
+  if(!is.null(seed) && !is.na(seed) && is.finite(seed))
     set.seed(seed)
   
   net = matrix(NA, nrow = nrow(expr_df), ncol = nrow(expr_df), dimnames = list(rownames(expr_df), rownames(expr_df)))

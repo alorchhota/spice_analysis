@@ -17,6 +17,7 @@ args <- add_argument(args, "--annot", help="gene annotation file", default="/wor
 args <- add_argument(args, "--cross", help="crossmappability file", default="/work-zfs/abattle4/lab_data/annotation/mappability_hg38_gencode26/hg38_cross_mappability_strength_symmetric_mean_sorted.txt")
 args <- add_argument(args, "--cross_th", help="crossmappability threshold", default=10)
 args <- add_argument(args, "--old_glasso", help="if TRUE, use saved graphical lasso networks from file (if any).", default=TRUE)
+args <- add_argument(args, "--seed", help="random seed number. non-numeric to avoid setting seed.", default="NA")
 args <- add_argument(args, "--o", help="output directory", default="results/outdir")
 
 argv = parse_args(args)
@@ -27,6 +28,9 @@ crossmap_threshold = argv$cross_th
 out_dir = argv$o
 method = argv$method
 use_old_glasso = argv$old_glasso
+seed = suppressWarnings(as.numeric(argv$seed))
+if(!is.finite(seed))
+  seed = NULL
 n.cores = argv$thread
 
 ### other settings
@@ -223,12 +227,12 @@ run_spearman <- function(){
 ##### genie3 methods #####
 # 'genie3', 'et_genie3',
 run_genie3 <- function(){
-  net <- get_genie3_net(expr_df, n.cores = n.cores, verbose = T)
+  net <- get_genie3_net(expr_df, n.cores = n.cores, verbose = T, seed = seed)
   return(net)
 }
 
 run_et_genie3 <- function(){
-  net <- get_genie3_net(expr_df, n.cores = n.cores, verbose = T, tree.method = 'ET')
+  net <- get_genie3_net(expr_df, n.cores = n.cores, verbose = T, tree.method = 'ET', seed = seed)
   return(net)
 }
 
@@ -418,6 +422,7 @@ run_glasso_likelihood <- function(){
   glasso_dir = create_glass_dir()
   out.pfx = sprintf("%s/glasso", glasso_dir)
   validation.frac = 0.2
+  glasso_seed = ifelse(is.numeric(seed), seed, 101) # must be numeric
   net <- get_glasso_net_optimized_by_likelihood(expr_df = expr_df, 
                                                 lambdas = lambdas, 
                                                 out.pfx = out.pfx, 
@@ -425,7 +430,8 @@ run_glasso_likelihood <- function(){
                                                 validation.frac = validation.frac,
                                                 save.net = T,
                                                 use.old.net = use_old_glasso,
-                                                verbose = T)
+                                                verbose = T, 
+                                                seed = glasso_seed)
   return(net)
 }
 
@@ -497,7 +503,7 @@ run_rlowpc <- function(){
 }
 
 run_random_net<- function(){
-  net <- get_random_net(expr_df)
+  net <- get_random_net(expr_df, seed = seed)
   return(net)
 }
 
@@ -581,7 +587,8 @@ run_spice_generic <- function(){
                weight.method = "qnorm", 
                adjust.weight = adjust.weight, 
                adjust.clr = F, 
-               verbose = T)
+               verbose = T, 
+               seed = seed)
   
   return(net)
 }

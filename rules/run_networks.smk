@@ -57,7 +57,8 @@ rule run_gtex_network:
     cross_th = config["crossmap_threshold"],
     thread = lambda wildcards, output: select_n_thread(wildcards),
     runtime = lambda wildcards, output: select_runtime(wildcards),
-    outdir = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}"
+    outdir = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}",
+    seed = config["random_seed"]
   output:
     net="{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_network.rds",
     absnet="{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_absnet.rds",
@@ -74,5 +75,6 @@ rule run_gtex_network:
       --cross "{input.cross}" \
       --cross_th {params.cross_th} \
       --old_glasso TRUE \
+      --seed {params.seed} \
       --o "{params.outdir}" 2>&1 | tee {log}
     """
