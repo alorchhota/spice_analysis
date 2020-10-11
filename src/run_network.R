@@ -502,7 +502,7 @@ run_rlowpc <- function(){
   return(net)
 }
 
-run_random_net<- function(){
+run_random <- function(){
   net <- get_random_net(expr_df, seed = seed)
   return(net)
 }
