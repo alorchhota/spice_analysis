@@ -60,6 +60,7 @@ rule run_gtex_network:
     outdir = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}"
   output:
     net="{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_network.rds",
+    absnet="{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_absnet.rds",
     time="{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_time.rds"
   log: 
     "{results_dir}/gtex_v8/logs/run_gtex_network/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}.log"
