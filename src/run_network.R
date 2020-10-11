@@ -184,8 +184,6 @@ run_wgcna_generic <- function(){
                        type = wgcna.type,
                        RsquaredCut = r2, 
                        verbose = T)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
@@ -212,15 +210,11 @@ run_wgcna_spearman_signed_0.9 = run_wgcna_generic
 ##### correlation methods #####
 run_pearson <- function(){
   net <- get_cor_net(expr_mat = expr_df, method = 'pearson')
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
 run_spearman <- function(){
   net <- get_cor_net(expr_mat = expr_df, method = 'spearman')
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
@@ -230,15 +224,11 @@ run_spearman <- function(){
 # 'genie3', 'et_genie3',
 run_genie3 <- function(){
   net <- get_genie3_net(expr_df, n.cores = n.cores, verbose = T)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T)  # make symmetric
   return(net)
 }
 
 run_et_genie3 <- function(){
   net <- get_genie3_net(expr_df, n.cores = n.cores, verbose = T, tree.method = 'ET')
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T)  # make symmetric
   return(net)
 }
 
@@ -285,8 +275,6 @@ run_aracne_generic <- function(){
   }
   
   net <- get_aracne_net(expr_df, mi.estimator = mi.estimator, eps = eps, disc = disc)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T)  # make symmetric
   return(net)
   
 }
@@ -341,8 +329,6 @@ run_mrnetb_generic <- function(){
   }
   
   net <- get_mrnetb_net(expr_df, mi.estimator = mi.estimator, disc = disc)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
@@ -379,8 +365,6 @@ run_mrnet_generic <- function(){
   }
   
   net <- get_mrnet_net(expr_df, mi.estimator = mi.estimator, disc = disc)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
@@ -416,8 +400,6 @@ run_clr_generic <- function(){
   }
   
   net <- get_clr_net(expr_df, mi.estimator = mi.estimator, disc = disc)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
@@ -444,8 +426,6 @@ run_glasso_likelihood <- function(){
                                                 save.net = T,
                                                 use.old.net = use_old_glasso,
                                                 verbose = T)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
@@ -484,8 +464,6 @@ run_glasso_net_optimized_by_n_edge_generic <- function(){
                                                 save.net = T,
                                                 use.old.net = use_old_glasso,
                                                 verbose = T)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
@@ -498,15 +476,11 @@ run_glasso_50k = run_glasso_net_optimized_by_n_edge_generic
 # 'pcorr_pearson', 'pcorr_spearman', 
 run_pcorr_pearson <- function(){
   net <- get_pcorr_net(expr_df, method = 'pearson')
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
 run_pcorr_spearman <- function(){
   net <- get_pcorr_net(expr_df, method = 'spearman')
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
@@ -514,22 +488,16 @@ run_pcorr_spearman <- function(){
 # 'pcit', 'rlowpc', 'random',
 run_pcit <- function(){
   net <- get_pcit_net(expr_df, method = "pearson")
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
 run_rlowpc <- function(){
   net <- get_rlowpc_net(expr_df)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
 run_random_net<- function(){
   net <- get_random_net(expr_df)
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
@@ -615,8 +583,6 @@ run_spice_generic <- function(){
                adjust.clr = F, 
                verbose = T)
   
-  net <- abs(net)  # absolute value
-  net <- pmax(net, t(net), na.rm = T) # symmetric
   return(net)
 }
 
@@ -731,8 +697,14 @@ coexpression_function = coexpression_functions[[1]]
 
 net_time = system.time(net <- coexpression_function())
 
+# take absolute values and make symmetric
+absnet <- abs(net)  # absolute value
+absnet <- pmax(absnet, t(absnet), na.rm = T) # symmetric
+
 ##### save network and time #####
 net_data_fn = sprintf('%s/%s_network.rds', out_dir, method)
 saveRDS(net, file = net_data_fn)
+absnet_data_fn = sprintf('%s/%s_absnet.rds', out_dir, method)
+saveRDS(absnet, file = absnet_data_fn)
 time_data_fn = sprintf('%s/%s_time.rds', out_dir, method)
 saveRDS(net_time, file = time_data_fn)
