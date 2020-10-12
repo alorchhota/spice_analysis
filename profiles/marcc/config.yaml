@@ -5,5 +5,5 @@ cluster-status: "slurm-status.py"
 max-jobs-per-second: 1
 max-status-checks-per-second: 5
 local-cores: 1
-latency-wait: 5
+latency-wait: 15
 

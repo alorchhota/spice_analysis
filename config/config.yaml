@@ -1,10 +1,8 @@
-results_dir: "/Users/ashissaha/github/spice_analysis/results/spice_results"
-gene_annot: "/Users/ashissaha/github/scnet/data/gencode.v26.annotation.gene.txt"
-# crossmap: "/work-zfs/abattle4/lab_data/annotation/mappability_hg38_gencode26/hg38_cross_mappability_strength_symmetric_mean_sorted.txt"
+results_dir: "/work-zfs/abattle4/ashis/progres/spice_anlysis"
+gene_annot: "/work-zfs/abattle4/ashis/progdata/scnet/gtex_v8_net/misc/gencode.v26.annotation.gene.txt"
 
-#results_dir: "/work-zfs/abattle4/ashis/progres/spice_anlysis"
-#gene_annot: "/work-zfs/abattle4/ashis/progdata/scnet/gtex_v8_net/misc/gencode.v26.annotation.gene.txt"
-#crossmap: "/work-zfs/abattle4/lab_data/annotation/mappability_hg38_gencode26/hg38_cross_mappability_strength_symmetric_mean_sorted.txt"
+# results_dir: "/Users/ashissaha/github/spice_analysis/results/spice_results"
+# gene_annot: "/Users/ashissaha/github/scnet/data/gencode.v26.annotation.gene.txt"
 
 crossmap_threshold: 0
 random_seed: 101
@@ -20,7 +18,6 @@ pathways:
   go: "/work-zfs/abattle4/lab_data/gsea_data/c5.all.v6.1.symbols.gmt"  # update the link
   cp: "/work-zfs/abattle4/lab_data/gsea_data/c2.cp.v6.1.symbols.gmt"
 
-#tissues: ['Whole_Blood', "Muscle_Skeletal"]
 tissues: ['Adipose_Subcutaneous', 'Adipose_Visceral_Omentum', 'Adrenal_Gland',
           'Artery_Aorta', 'Artery_Coronary', 'Artery_Tibial',
           'Brain_Amygdala', 'Brain_Anterior_cingulate_cortex_BA24',
@@ -46,9 +43,59 @@ n_genes: [500, 1500, 5000]
 gene_selection: ["AXPVAR"]
 methods: ["wgcna", "spice"]
 
-
-validation_tissues: ['Whole_Blood', "Muscle_Skeletal"]
+validation_tissues: ['Brain_Cerebellum', "Pancreas", "Heart_Left_Ventricle", "Lung"]
 validation_correction_labels: ["corrected"]
 validation_n_genes: [1500]
 validation_gene_selection: ["AXPVAR"]
-validation_methods: ["pearson", "wgcna_unsigned", "spice_Mp_G.8_Ra_A1", "genie3", "mrnetb"]
+validation_methods: [ 'wgcna_pearson_unsigned_0.6', 'wgcna_pearson_unsigned_0.7', 'wgcna_pearson_unsigned_0.8', 'wgcna_pearson_unsigned_0.9', 
+                      'wgcna_pearson_signed_0.6', 'wgcna_pearson_signed_0.7', 'wgcna_pearson_signed_0.8', 'wgcna_pearson_signed_0.9',
+                      'wgcna_spearman_unsigned_0.6', 'wgcna_spearman_unsigned_0.7', 'wgcna_spearman_unsigned_0.8', 'wgcna_spearman_unsigned_0.9', 
+                      'wgcna_spearman_signed_0.6', 'wgcna_spearman_signed_0.7', 'wgcna_spearman_signed_0.8', 'wgcna_spearman_signed_0.9',
+                      
+                      'pearson', 'spearman', 
+                      'genie3', 'et_genie3',
+                      
+                      'aracne_spearman_e0_freq', 'aracne_spearman_e.05_freq', 'aracne_spearman_e.1_freq',
+                      'aracne_spearman_e0_width', 'aracne_spearman_e.05_width', 'aracne_spearman_e.1_width',
+                      
+                      'aracne_pearson_e0_freq', 'aracne_pearson_e.05_freq', 'aracne_pearson_e.1_freq',
+                      'aracne_pearson_e0_width', 'aracne_pearson_e.05_width', 'aracne_pearson_e.1_width',
+                      
+                      'aracne_empirical_e0_freq', 'aracne_empirical_e.05_freq', 'aracne_empirical_e.1_freq',
+                      'aracne_empirical_e0_width', 'aracne_empirical_e.05_width', 'aracne_empirical_e.1_width',
+                      
+                      'mrnetb_spearman_freq', 'mrnetb_pearson_freq', 'mrnetb_empirical_freq',
+                      'mrnetb_spearman_width', 'mrnetb_pearson_width', 'mrnetb_empirical_width',
+                      
+                      'mrnet_spearman_freq', 'mrnet_pearson_freq', 'mrnet_empirical_freq',
+                      'mrnet_spearman_width', 'mrnet_pearson_width', 'mrnet_empirical_width',
+                      
+                      'clr_spearman_freq', 'clr_pearson_freq', 'clr_empirical_freq', 
+                      'clr_spearman_width', 'clr_pearson_width', 'clr_empirical_width', 
+                      
+                      'glasso_likelihood', 
+                      'glasso_5k', 'glasso_10k', 'glasso_25k', 'glasso_50k',
+                      
+                      'pcorr_pearson', 'pcorr_spearman', 
+                        
+                      'random',
+                        
+                      'spice_Mp_G1_Ra_A0', 'spice_Mp_G1_Rm_A0', 'spice_Mp_G1_RM_A0', 'spice_Mp_G1_Ra_A1', 'spice_Mp_G1_Rm_A1', 'spice_Mp_G1_RM_A1',
+                      'spice_Mp_G.9_Ra_A0', 'spice_Mp_G.9_Rm_A0', 'spice_Mp_G.9_RM_A0', 'spice_Mp_G.9_Ra_A1', 'spice_Mp_G.9_Rm_A1', 'spice_Mp_G.9_RM_A1',
+                      'spice_Mp_G.8_Ra_A0', 'spice_Mp_G.8_Rm_A0', 'spice_Mp_G.8_RM_A0', 'spice_Mp_G.8_Ra_A1', 'spice_Mp_G.8_Rm_A1', 'spice_Mp_G.8_RM_A1',
+                      'spice_Mp_G.7_Ra_A0', 'spice_Mp_G.7_Rm_A0', 'spice_Mp_G.7_RM_A0', 'spice_Mp_G.7_Ra_A1', 'spice_Mp_G.7_Rm_A1', 'spice_Mp_G.7_RM_A1',
+                      
+                      'spice_Ms_G1_Ra_A0', 'spice_Ms_G1_Rm_A0', 'spice_Ms_G1_RM_A0', 'spice_Ms_G1_Ra_A1', 'spice_Ms_G1_Rm_A1', 'spice_Ms_G1_RM_A1',
+                      'spice_Ms_G.9_Ra_A0', 'spice_Ms_G.9_Rm_A0', 'spice_Ms_G.9_RM_A0', 'spice_Ms_G.9_Ra_A1', 'spice_Ms_G.9_Rm_A1', 'spice_Ms_G.9_RM_A1',
+                      'spice_Ms_G.8_Ra_A0', 'spice_Ms_G.8_Rm_A0', 'spice_Ms_G.8_RM_A0', 'spice_Ms_G.8_Ra_A1', 'spice_Ms_G.8_Rm_A1', 'spice_Ms_G.8_RM_A1',
+                      'spice_Ms_G.7_Ra_A0', 'spice_Ms_G.7_Rm_A0', 'spice_Ms_G.7_RM_A0', 'spice_Ms_G.7_Ra_A1', 'spice_Ms_G.7_Rm_A1', 'spice_Ms_G.7_RM_A1',
+                      
+                      'spice_ME_G1_Ra_A0', 'spice_ME_G1_Rm_A0', 'spice_ME_G1_RM_A0', 'spice_ME_G1_Ra_A1', 'spice_ME_G1_Rm_A1', 'spice_ME_G1_RM_A1',
+                      'spice_ME_G.9_Ra_A0', 'spice_ME_G.9_Rm_A0', 'spice_ME_G.9_RM_A0', 'spice_ME_G.9_Ra_A1', 'spice_ME_G.9_Rm_A1', 'spice_ME_G.9_RM_A1',
+                      'spice_ME_G.8_Ra_A0', 'spice_ME_G.8_Rm_A0', 'spice_ME_G.8_RM_A0', 'spice_ME_G.8_Ra_A1', 'spice_ME_G.8_Rm_A1', 'spice_ME_G.8_RM_A1',
+                      'spice_ME_G.7_Ra_A0', 'spice_ME_G.7_Rm_A0', 'spice_ME_G.7_RM_A0', 'spice_ME_G.7_Ra_A1', 'spice_ME_G.7_Rm_A1', 'spice_ME_G.7_RM_A1',
+                      
+                      'spice_MP_G1_Ra_A0', 'spice_MP_G1_Rm_A0', 'spice_MP_G1_RM_A0', 'spice_MP_G1_Ra_A1', 'spice_MP_G1_Rm_A1', 'spice_MP_G1_RM_A1',
+                      'spice_MP_G.9_Ra_A0', 'spice_MP_G.9_Rm_A0', 'spice_MP_G.9_RM_A0', 'spice_MP_G.9_Ra_A1', 'spice_MP_G.9_Rm_A1', 'spice_MP_G.9_RM_A1',
+                      'spice_MP_G.8_Ra_A0', 'spice_MP_G.8_Rm_A0', 'spice_MP_G.8_RM_A0', 'spice_MP_G.8_Ra_A1', 'spice_MP_G.8_Rm_A1', 'spice_MP_G.8_RM_A1',
+                      'spice_MP_G.7_Ra_A0', 'spice_MP_G.7_Rm_A0', 'spice_MP_G.7_RM_A0', 'spice_MP_G.7_Ra_A1', 'spice_MP_G.7_Rm_A1', 'spice_MP_G.7_RM_A1' ]
