@@ -3,7 +3,6 @@ shell.prefix("module load R/4.0.2; ")  # load modules in marcc. may produce erro
 configfile: "config/config.yaml"
 results_dir = config["results_dir"]
 
-
 rule all:
   input:
     expand(
@@ -23,4 +22,5 @@ include: "rules/download_resources.smk"
 include: "rules/data_correction.smk"
 include: "rules/run_networks.smk"
 include: "rules/string_ppi.smk"
+include: "rules/msigdb_genesets.smk"
 

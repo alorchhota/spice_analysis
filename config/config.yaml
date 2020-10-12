@@ -12,11 +12,23 @@ string:
   species: 9606
   max_homology: 60
 
+msigdb_species: "Homo sapiens"
 pathways:
-  hallmark: "/work-zfs/abattle4/lab_data/gsea_data/h.all.v6.1.symbols.gmt"
-  kegg: "/work-zfs/abattle4/lab_data/gsea_data/c2.cp.kegg.v6.1.symbols.gmt"
-  go: "/work-zfs/abattle4/lab_data/gsea_data/c5.all.v6.1.symbols.gmt"  # update the link
-  cp: "/work-zfs/abattle4/lab_data/gsea_data/c2.cp.v6.1.symbols.gmt"
+  hallmark: 
+    cat: "H"
+    subcat: ""
+  kegg: 
+    cat: "C2"
+    subcat: "CP:KEGG"
+  go: 
+    cat: "C5"
+    subcat: "BP"
+  reactome: 
+    cat: "C2"
+    subcat: "CP:REACTOME"
+  biocarta: 
+    cat: "C2"
+    subcat: "CP:BIOCARTA"
 
 tissues: ['Adipose_Subcutaneous', 'Adipose_Visceral_Omentum', 'Adrenal_Gland',
           'Artery_Aorta', 'Artery_Coronary', 'Artery_Tibial',
@@ -90,10 +102,10 @@ validation_methods: [ 'wgcna_pearson_unsigned_0.6', 'wgcna_pearson_unsigned_0.7'
                       'spice_Ms_G.8_Ra_A0', 'spice_Ms_G.8_Rm_A0', 'spice_Ms_G.8_RM_A0', 'spice_Ms_G.8_Ra_A1', 'spice_Ms_G.8_Rm_A1', 'spice_Ms_G.8_RM_A1',
                       'spice_Ms_G.7_Ra_A0', 'spice_Ms_G.7_Rm_A0', 'spice_Ms_G.7_RM_A0', 'spice_Ms_G.7_Ra_A1', 'spice_Ms_G.7_Rm_A1', 'spice_Ms_G.7_RM_A1',
                       
-                      'spice_ME_G1_Ra_A0', 'spice_ME_G1_Rm_A0', 'spice_ME_G1_RM_A0', 'spice_ME_G1_Ra_A1', 'spice_ME_G1_Rm_A1', 'spice_ME_G1_RM_A1',
-                      'spice_ME_G.9_Ra_A0', 'spice_ME_G.9_Rm_A0', 'spice_ME_G.9_RM_A0', 'spice_ME_G.9_Ra_A1', 'spice_ME_G.9_Rm_A1', 'spice_ME_G.9_RM_A1',
-                      'spice_ME_G.8_Ra_A0', 'spice_ME_G.8_Rm_A0', 'spice_ME_G.8_RM_A0', 'spice_ME_G.8_Ra_A1', 'spice_ME_G.8_Rm_A1', 'spice_ME_G.8_RM_A1',
-                      'spice_ME_G.7_Ra_A0', 'spice_ME_G.7_Rm_A0', 'spice_ME_G.7_RM_A0', 'spice_ME_G.7_Ra_A1', 'spice_ME_G.7_Rm_A1', 'spice_ME_G.7_RM_A1',
+                      # 'spice_ME_G1_Ra_A0', 'spice_ME_G1_Rm_A0', 'spice_ME_G1_RM_A0', 'spice_ME_G1_Ra_A1', 'spice_ME_G1_Rm_A1', 'spice_ME_G1_RM_A1',
+                      # 'spice_ME_G.9_Ra_A0', 'spice_ME_G.9_Rm_A0', 'spice_ME_G.9_RM_A0', 'spice_ME_G.9_Ra_A1', 'spice_ME_G.9_Rm_A1', 'spice_ME_G.9_RM_A1',
+                      # 'spice_ME_G.8_Ra_A0', 'spice_ME_G.8_Rm_A0', 'spice_ME_G.8_RM_A0', 'spice_ME_G.8_Ra_A1', 'spice_ME_G.8_Rm_A1', 'spice_ME_G.8_RM_A1',
+                      # 'spice_ME_G.7_Ra_A0', 'spice_ME_G.7_Rm_A0', 'spice_ME_G.7_RM_A0', 'spice_ME_G.7_Ra_A1', 'spice_ME_G.7_Rm_A1', 'spice_ME_G.7_RM_A1',
                       
                       'spice_MP_G1_Ra_A0', 'spice_MP_G1_Rm_A0', 'spice_MP_G1_RM_A0', 'spice_MP_G1_Ra_A1', 'spice_MP_G1_Rm_A1', 'spice_MP_G1_RM_A1',
                       'spice_MP_G.9_Ra_A0', 'spice_MP_G.9_Rm_A0', 'spice_MP_G.9_RM_A0', 'spice_MP_G.9_Ra_A1', 'spice_MP_G.9_Rm_A1', 'spice_MP_G.9_RM_A1',
