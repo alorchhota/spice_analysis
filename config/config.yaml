@@ -30,6 +30,22 @@ pathways:
     cat: "C2"
     subcat: "CP:BIOCARTA"
 
+eval_opts:
+  auc:
+    curve: "FALSE"
+    max: "TRUE"
+    min: "TRUE"
+    rand: "FALSE"
+    dg: "FALSE"
+  weight:
+    na_handle: "known"
+    na_rm: "FALSE"
+    neg_handle: "error"
+  precision:
+    top: ["NA", 1000, 5000, 10000, 50000]
+    threshold: [0.7, 0.4, 0.15]
+    
+
 tissues: ['Adipose_Subcutaneous', 'Adipose_Visceral_Omentum', 'Adrenal_Gland',
           'Artery_Aorta', 'Artery_Coronary', 'Artery_Tibial',
           'Brain_Amygdala', 'Brain_Anterior_cingulate_cortex_BA24',
