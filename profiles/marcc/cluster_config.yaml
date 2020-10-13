@@ -11,4 +11,9 @@ run_gtex_network:
   time: "{params.runtime}"
   ntasks: "{params.thread}"
   job-name: "{wildcards.method}"
- 
+
+eval_shared_pathway_n_thread:
+  ntasks: "{params.thread}"
+
+eval_pathway_enrichment:
+  ntasks: "{params.thread}"
