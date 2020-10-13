@@ -322,5 +322,67 @@ print(mean_performance)
 print("selected - max: ")
 print(selected_vals - max_vals)
 
+
+############ spice parameters############
+spice_df = res_df[grepl("spice_", res_df$method, fixed = TRUE), , drop = F]
+spice_df$cor = sapply(spice_df$method, function(s) strsplit(s, split = "_")[[1]][2])
+spice_df$gene_frac = sapply(spice_df$method, function(s) strsplit(s, split = "_")[[1]][3])
+spice_df$rank = sapply(spice_df$method, function(s) strsplit(s, split = "_")[[1]][4])
+spice_df$adjust = sapply(spice_df$method, function(s) strsplit(s, split = "_")[[1]][5])
+
+# pdf(out_fn)
+cowplot::plot_grid(
+  plotlist = get_comparison_plots(
+    spice_df,
+    xvar = "cor",
+    metrics = metrics,
+    title = "spice:cor"
+  ),
+  ncol = 3
+)
+
+cowplot::plot_grid(
+  plotlist = get_comparison_plots(
+    spice_df,
+    xvar = "gene_frac",
+    metrics = metrics,
+    title = "spice:gene_frac"
+  ),
+  ncol = 3
+)
+
+cowplot::plot_grid(
+  plotlist = get_comparison_plots(
+    spice_df,
+    xvar = "rank",
+    metrics = metrics,
+    title = "spice:rank"
+  ),
+  ncol = 3
+)
+
+cowplot::plot_grid(
+  plotlist = get_comparison_plots(
+    spice_df,
+    xvar = "adjust",
+    metrics = metrics,
+    title = "spice:adjust"
+  ),
+  ncol = 3
+)
+
+### selected param
+selected_method = "spice_Mp_G.8_Ra_A1"
+
+mean_performance = aggregate(spice_df[, metrics], list(spice_df$method), mean)
+max_vals = apply(mean_performance[, metrics, drop=F], MARGIN = 2, max)
+selected_vals = apply(mean_performance[mean_performance$Group.1 == selected_method, metrics,drop=F], MARGIN = 2, max)
+
+print(sprintf("selected_method: %s", selected_method))
+print("mean performance per method:")
+print(mean_performance)
+print("selected - max: ")
+print(selected_vals - max_vals)
+
 ### close plots
 dev.off()
