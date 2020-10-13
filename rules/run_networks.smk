@@ -12,7 +12,7 @@ def select_n_thread(wildcards):
   elif ng <= 5000:
     th = 4
     if 'genie3' in met:
-      th = 6
+      th = 8
     elif 'spice' in met:
       th = 6
   else:
@@ -36,7 +36,7 @@ def select_runtime(wildcards):
   elif ng <= 5000:
     rt = 4 * 60
     if 'genie3' in met:
-      rt = 16 * 60
+      rt = 15 * 60
     elif 'glasso' in met:
       rt = 16 * 60
     elif 'spice' in met:

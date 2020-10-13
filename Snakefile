@@ -3,6 +3,34 @@ shell.prefix("module load R/4.0.2; ")  # load modules in marcc. may produce erro
 configfile: "config/config.yaml"
 results_dir = config["results_dir"]
 
+rule all_test:
+  input:
+    expand(
+      [ # network run
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_network.rds",
+      # string ppi
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/string_ppi.rds",
+      # string ppi auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_auc.rds",
+      # string ppi hub auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_hub_auc.rds",
+      # string ppi spearman cor
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_spearman_cor.rds",
+      # string ppi precision
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_precision.rds",
+      # shared pathway auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_shared_pathway_auc_{pathway}.rds",
+      #pathway enrichment
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds"],
+      #
+        results_dir = config['results_dir'],
+        tissue = config['test_tissues'],
+        correction_label = config['test_correction_labels'],
+        gene_selection=config['test_gene_selection'],
+        n_genes=config['test_n_genes'],
+        method = config['test_methods'],
+        pathway = config['pathways'])
+
 rule all:
   input:
     expand(
