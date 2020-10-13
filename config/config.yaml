@@ -44,6 +44,10 @@ eval_opts:
   precision:
     top: ["NA", 1000, 5000, 10000, 50000]
     threshold: [0.7, 0.4, 0.15]
+  pathway_enrichment:
+    min_gene: 5
+    max_gene: 100
+    iter: 10000
     
 
 tissues: ['Adipose_Subcutaneous', 'Adipose_Visceral_Omentum', 'Adrenal_Gland',

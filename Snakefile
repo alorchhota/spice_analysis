@@ -17,13 +17,19 @@ rule all:
       # string ppi spearman cor
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_spearman_cor.rds",
       # string ppi precision
-      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_precision.rds"], 
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_precision.rds",
+      # shared pathway auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_shared_pathway_auc_{pathway}.rds",
+      #pathway enrichment
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds" ],
+      #
         results_dir = config['results_dir'], 
         tissue = config['validation_tissues'], 
         correction_label = config['validation_correction_labels'], 
         gene_selection=config['validation_gene_selection'], 
         n_genes=config['validation_n_genes'], 
-        method = config['validation_methods'])
+        method = config['validation_methods'],
+        pathway = config['pathways'])
 
 include: "rules/download_gtex.smk"
 include: "rules/download_resources.smk"
@@ -32,3 +38,4 @@ include: "rules/run_networks.smk"
 include: "rules/string_ppi.smk"
 include: "rules/msigdb_genesets.smk"
 include: "rules/eval_interactions.smk"
+include: "rules/eval_pathways.smk"
