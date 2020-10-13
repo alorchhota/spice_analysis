@@ -24,7 +24,7 @@ run_string_ppi_spearman_cor:
 run_string_ppi_precision:
   ntasks: "{params.thread}"
   
-eval_shared_pathway_n_thread:
+eval_shared_pathway:
   ntasks: "{params.thread}"
 
 eval_pathway_enrichment:
