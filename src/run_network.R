@@ -41,6 +41,8 @@ implemented_methods = c('wgcna_pearson_unsigned_0.6', 'wgcna_pearson_unsigned_0.
                         'wgcna_pearson_signed_0.6', 'wgcna_pearson_signed_0.7', 'wgcna_pearson_signed_0.8', 'wgcna_pearson_signed_0.9',
                         'wgcna_spearman_unsigned_0.6', 'wgcna_spearman_unsigned_0.7', 'wgcna_spearman_unsigned_0.8', 'wgcna_spearman_unsigned_0.9', 
                         'wgcna_spearman_signed_0.6', 'wgcna_spearman_signed_0.7', 'wgcna_spearman_signed_0.8', 'wgcna_spearman_signed_0.9',
+                        
+                        'wgcna',
 
                         'pearson', 'spearman', 
                         # 'pearson_rp', 'spearman_rp',
@@ -56,19 +58,29 @@ implemented_methods = c('wgcna_pearson_unsigned_0.6', 'wgcna_pearson_unsigned_0.
                         'aracne_empirical_e0_freq', 'aracne_empirical_e.05_freq', 'aracne_empirical_e.1_freq',
                         'aracne_empirical_e0_width', 'aracne_empirical_e.05_width', 'aracne_empirical_e.1_width',
                         
+                        'aracne',
+                        
                         'mrnetb_spearman_freq', 'mrnetb_pearson_freq', 'mrnetb_empirical_freq',
                         'mrnetb_spearman_width', 'mrnetb_pearson_width', 'mrnetb_empirical_width',
+                        
+                        'mrnetb',
                         
                         'mrnet_spearman_freq', 'mrnet_pearson_freq', 'mrnet_empirical_freq',
                         'mrnet_spearman_width', 'mrnet_pearson_width', 'mrnet_empirical_width',
                         
+                        'mrnet',
+                        
                         'clr_spearman_freq', 'clr_pearson_freq', 'clr_empirical_freq', 
                         'clr_spearman_width', 'clr_pearson_width', 'clr_empirical_width', 
+                        
+                        'clr',
                         
                         'glasso_likelihood', 
                         'glasso_5k', 'glasso_10k', 'glasso_25k', 'glasso_50k',
                         
                         'pcorr_pearson', 'pcorr_spearman', 
+                        
+                        'pcorr',
                         
                         'pcit', 'rlowpc', 'random',
                         
@@ -90,7 +102,9 @@ implemented_methods = c('wgcna_pearson_unsigned_0.6', 'wgcna_pearson_unsigned_0.
                         'spice_MP_G1_Ra_A0', 'spice_MP_G1_Rm_A0', 'spice_MP_G1_RM_A0', 'spice_MP_G1_Ra_A1', 'spice_MP_G1_Rm_A1', 'spice_MP_G1_RM_A1',
                         'spice_MP_G.9_Ra_A0', 'spice_MP_G.9_Rm_A0', 'spice_MP_G.9_RM_A0', 'spice_MP_G.9_Ra_A1', 'spice_MP_G.9_Rm_A1', 'spice_MP_G.9_RM_A1',
                         'spice_MP_G.8_Ra_A0', 'spice_MP_G.8_Rm_A0', 'spice_MP_G.8_RM_A0', 'spice_MP_G.8_Ra_A1', 'spice_MP_G.8_Rm_A1', 'spice_MP_G.8_RM_A1',
-                        'spice_MP_G.7_Ra_A0', 'spice_MP_G.7_Rm_A0', 'spice_MP_G.7_RM_A0', 'spice_MP_G.7_Ra_A1', 'spice_MP_G.7_Rm_A1', 'spice_MP_G.7_RM_A1')
+                        'spice_MP_G.7_Ra_A0', 'spice_MP_G.7_Rm_A0', 'spice_MP_G.7_RM_A0', 'spice_MP_G.7_Ra_A1', 'spice_MP_G.7_Rm_A1', 'spice_MP_G.7_RM_A1',
+                        
+                        'spice' )
 stopifnot(method %in% implemented_methods)
 
 
@@ -211,6 +225,18 @@ run_wgcna_spearman_signed_0.7 = run_wgcna_generic
 run_wgcna_spearman_signed_0.8 = run_wgcna_generic 
 run_wgcna_spearman_signed_0.9 = run_wgcna_generic
 
+run_wgcna <- function(){
+  wgcna.method = "pearson"
+  r2 = 0.6
+  wgcna.type = "signed"
+  net <- get_wgcna_net(expr_mat = expr_df, 
+                       method = wgcna.method,
+                       type = wgcna.type,
+                       RsquaredCut = r2, 
+                       verbose = T)
+  return(net)
+}
+
 ##### correlation methods #####
 run_pearson <- function(){
   net <- get_cor_net(expr_mat = expr_df, method = 'pearson')
@@ -307,6 +333,15 @@ run_aracne_empirical_e0_width = run_aracne_generic
 run_aracne_empirical_e.05_width = run_aracne_generic 
 run_aracne_empirical_e.1_width = run_aracne_generic
 
+run_aracne <- function(){
+  mi.estimator = "pearson"
+  eps = 0.1
+  disc = "equalfreq"
+  net <- get_aracne_net(expr_df, mi.estimator = mi.estimator, eps = eps, disc = disc)
+  return(net)
+}
+
+
 ##### mrnetb methods ######
 # 'mrnetb_spearman_freq', 'mrnetb_pearson_freq', 'mrnetb_empirical_freq',
 # 'mrnetb_spearman_width', 'mrnetb_pearson_width', 'mrnetb_empirical_width',
@@ -342,6 +377,13 @@ run_mrnetb_empirical_freq = run_mrnetb_generic
 run_mrnetb_spearman_width = run_mrnetb_generic 
 run_mrnetb_pearson_width = run_mrnetb_generic 
 run_mrnetb_empirical_width = run_mrnetb_generic
+
+run_mrnetb <- function(){
+  mi.estimator = "pearson"
+  disc = "equalfreq"
+  net <- get_mrnetb_net(expr_df, mi.estimator = mi.estimator, disc = disc)
+  return(net)
+}
 
 ##### mrnet methods #####
 # 'mrnet_spearman_freq', 'mrnet_pearson_freq', 'mrnet_empirical_freq',
@@ -379,6 +421,13 @@ run_mrnet_spearman_width = run_mrnet_generic
 run_mrnet_pearson_width = run_mrnet_generic 
 run_mrnet_empirical_width = run_mrnet_generic
 
+run_mrnet <- function(){
+  mi.estimator = "pearson"
+  disc = "equalfreq"
+  net <- get_mrnet_net(expr_df, mi.estimator = mi.estimator, disc = disc)
+  return(net)
+}
+
 ##### clr methods #######
 # 'clr_spearman_freq', 'clr_pearson_freq', 'clr_empirical_freq', 
 # 'clr_spearman_width', 'clr_pearson_width', 'clr_empirical_width', 
@@ -413,6 +462,13 @@ run_clr_empirical_freq = run_clr_generic
 run_clr_spearman_width = run_clr_generic 
 run_clr_pearson_width = run_clr_generic 
 run_clr_empirical_width = run_clr_generic
+
+run_clr <- function(){
+  mi.estimator = "pearson"
+  disc = "equalfreq"
+  net <- get_clr_net(expr_df, mi.estimator = mi.estimator, disc = disc)
+  return(net)
+}
 
 ##### glasso methods #####
 # 'glasso_likelihood', 
@@ -486,6 +542,11 @@ run_pcorr_pearson <- function(){
 }
 
 run_pcorr_spearman <- function(){
+  net <- get_pcorr_net(expr_df, method = 'spearman')
+  return(net)
+}
+
+run_pcorr <- function(){
   net <- get_pcorr_net(expr_df, method = 'spearman')
   return(net)
 }
@@ -693,6 +754,27 @@ run_spice_MP_G.7_Ra_A1 = run_spice_generic
 run_spice_MP_G.7_Rm_A1 = run_spice_generic 
 run_spice_MP_G.7_RM_A1 = run_spice_generic
 
+run_spice_generic <- function(){
+  spice_method = "pearson"
+  frac.gene = 0.8
+  rank.ties = "average"
+  adjust.weight = T
+  net <- spice(expr = expr_df, 
+               method = spice_method, 
+               iter = 100, 
+               frac.gene = frac.gene, 
+               frac.sample = 0.8, 
+               n.cores = n.cores, 
+               rank.ties = rank.ties, 
+               filter.mat = NULL, 
+               weight.method = "qnorm", 
+               adjust.weight = adjust.weight, 
+               adjust.clr = F, 
+               verbose = T, 
+               seed = seed)
+  
+  return(net)
+}
 
 ##### run appropriate method expression data #####
 function_name = paste0("run_", method)
