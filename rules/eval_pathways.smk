@@ -1,16 +1,3 @@
-def eval_shared_pathway_n_thread(wildcards):
-  ng = int(wildcards.n_genes)
-  #
-  if ng <= 1500:
-    th = 1
-  elif ng <= 5000:
-    th = 2
-  else:
-    th = 1
-  #
-  return th
-
-
 rule eval_shared_pathway:
   input:
     absnet = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_absnet.rds",
@@ -23,7 +10,7 @@ rule eval_shared_pathway:
     dg = config['eval_opts']['auc']['dg'],
     na_rm = config['eval_opts']['weight']['na_rm'],
     neg = config['eval_opts']['weight']['neg_handle'],
-    thread = lambda wildcards, output: eval_shared_pathway_n_thread(wildcards)
+    thread = lambda wildcards, output: get_matrix_size_dependent_default_thread(wildcards)
   output:
     "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_shared_pathway_auc_{pathway}.rds"
   log: 
@@ -55,7 +42,7 @@ rule eval_pathway_enrichment:
     seed = config['random_seed'],
     na_rm = config['eval_opts']['weight']['na_rm'],
     neg = config['eval_opts']['weight']['neg_handle'],
-    thread = lambda wildcards, output: eval_shared_pathway_n_thread(wildcards)
+    thread = lambda wildcards, output: get_matrix_size_dependent_default_thread(wildcards)
   output:
     "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds"
   log: 

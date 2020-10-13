@@ -62,6 +62,7 @@ rule all:
         method = config['validation_methods'],
         pathway = config['pathways'])
 
+include: "rules/resource_allocation.smk"
 include: "rules/download_gtex.smk"
 include: "rules/download_resources.smk"
 include: "rules/data_correction.smk"

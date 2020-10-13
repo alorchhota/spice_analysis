@@ -9,7 +9,8 @@ rule run_string_ppi_auc:
     rand = config['eval_opts']['auc']['rand'],
     dg = config['eval_opts']['auc']['dg'],
     na = config['eval_opts']['weight']['na_handle'],
-    neg = config['eval_opts']['weight']['neg_handle']
+    neg = config['eval_opts']['weight']['neg_handle'],
+    thread = lambda wildcards, output: get_matrix_size_dependent_default_thread(wildcards)
   output:
     "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_auc.rds"
   log: 
@@ -41,7 +42,8 @@ rule run_string_ppi_hub_auc:
     rand = config['eval_opts']['auc']['rand'],
     dg = config['eval_opts']['auc']['dg'],
     na = config['eval_opts']['weight']['na_handle'],
-    neg = config['eval_opts']['weight']['neg_handle']
+    neg = config['eval_opts']['weight']['neg_handle'],
+    thread = lambda wildcards, output: get_matrix_size_dependent_default_thread(wildcards)
   output:
     "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_hub_auc.rds"
   log: 
@@ -69,7 +71,8 @@ rule run_string_ppi_spearman_cor:
   params:
     method = "spearman",
     na = config['eval_opts']['weight']['na_handle'],
-    neg = config['eval_opts']['weight']['neg_handle']
+    neg = config['eval_opts']['weight']['neg_handle'],
+    thread = lambda wildcards, output: get_matrix_size_dependent_default_thread(wildcards)
   output:
     "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_spearman_cor.rds"
   log: 
@@ -94,7 +97,8 @@ rule run_string_ppi_precision:
     threshold = ",".join([str(s) for s in config['eval_opts']['precision']['threshold']]),
     top = ",".join([str(s) for s in config['eval_opts']['precision']['top']]),
     na = config['eval_opts']['weight']['na_handle'],
-    neg = config['eval_opts']['weight']['neg_handle']
+    neg = config['eval_opts']['weight']['neg_handle'],
+    thread = lambda wildcards, output: get_matrix_size_dependent_default_thread(wildcards)
   output:
     "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_precision.rds"
   log: 

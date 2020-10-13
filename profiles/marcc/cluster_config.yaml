@@ -12,8 +12,23 @@ run_gtex_network:
   ntasks: "{params.thread}"
   job-name: "{wildcards.method}"
 
+run_string_ppi_auc:
+  ntasks: "{params.thread}"
+  
+run_string_ppi_hub_auc:
+  ntasks: "{params.thread}"
+  
+run_string_ppi_spearman_cor:
+  ntasks: "{params.thread}"
+  
+run_string_ppi_precision:
+  ntasks: "{params.thread}"
+  
 eval_shared_pathway_n_thread:
   ntasks: "{params.thread}"
 
 eval_pathway_enrichment:
+  ntasks: "{params.thread}"
+
+get_string_ppi:
   ntasks: "{params.thread}"

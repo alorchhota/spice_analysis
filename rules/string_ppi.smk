@@ -44,7 +44,8 @@ rule get_string_ppi:
     directed = "FALSE",
     score_threshold = 0,
     string_dir = "{results_dir}/shared_data/string",
-    norm = "TRUE"
+    norm = "TRUE",
+    thread = lambda wildcards, output: get_matrix_size_dependent_default_thread(wildcards)
   output:
     ppi_file = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/string_ppi.rds"
   log: 
