@@ -156,5 +156,5 @@ test_tissues: ['Adipose_Subcutaneous', 'Adipose_Visceral_Omentum', 'Adrenal_Glan
 test_correction_labels: ["corrected"]
 test_n_genes: [5000]
 test_gene_selection: ["AXPVAR"]
-test_methods: ["et_genie3"]
+test_methods: ["et_genie3", "spice", "wgcna", "mrnetb", "aracne"]
 

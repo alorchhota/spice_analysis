@@ -70,3 +70,75 @@ rule aggregate_all_validation_evals:
       2>&1 | tee {log}
     """
   
+rule aggregate_test_eval_per_dataset:
+  input:
+    expand(
+      [# string ppi auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_auc.rds",
+      # string ppi hub auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_hub_auc.rds",
+      # string ppi spearman cor
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_spearman_cor.rds",
+      # string ppi precision
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_precision.rds",
+      # shared pathway auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_shared_pathway_auc_{pathway}.rds",
+      #pathway enrichment
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds"],
+        results_dir = "{results_dir}", 
+        tissue = "{tissue}", 
+        correction_label = "{correction_label}", 
+        gene_selection = "{gene_selection}", 
+        n_genes = "{n_genes}", 
+        method = config['test_methods'],
+        pathway = config['pathways'])
+  params:
+    dir = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}",
+    methods = ",".join([str(s) for s in config['test_methods']])
+  output:
+    "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/aggregated_evaluations_test.rds"
+  log: 
+    "{results_dir}/gtex_v8/logs/aggregate_test_eval_per_dataset/{tissue}/{correction_label}/{gene_selection}/{n_genes}/aggregate_test_eval_per_dataset.log"
+  shell:
+    """
+    Rscript src/aggregate_evaluations_per_dataset.R \
+      --dir "{params.dir}" \
+      --methods "{params.methods}" \
+      --o "{output}" \
+      2>&1 | tee {log}
+    """
+  
+
+rule aggregate_all_test_evals:
+  input:
+    expand(
+      ["{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/aggregated_evaluations_test.rds"],
+        results_dir = "{results_dir}",
+        tissue = config['test_tissues'],
+        correction_label = config['test_correction_labels'],
+        gene_selection = config['test_gene_selection'],
+        n_genes = config['test_n_genes'])
+  params:
+    dir = "{results_dir}/gtex_v8/results",
+    tissues = ",".join([str(s) for s in config['test_tissues']]),
+    correction_labels = ",".join([str(s) for s in config['test_correction_labels']]),
+    gene_selections = ",".join([str(s) for s in config['test_gene_selection']]),
+    n_genes = ",".join([str(s) for s in config['test_n_genes']]),
+    fn = "aggregated_evaluations_test.rds"
+  output:
+    "{results_dir}/gtex_v8/aggregated/all_evaluations_test.rds"
+  log: 
+    "{results_dir}/gtex_v8/logs/aggregate_all_test_evals/aggregate_all_test_evals.log"
+  shell:
+    """
+    Rscript src/aggregate_aggregated_evaluations.R \
+      --dir "{params.dir}" \
+      --tissue "{params.tissues}" \
+      --correction "{params.correction_labels}" \
+      --gene_selection "{params.gene_selections}" \
+      --n_genes "{params.n_genes}" \
+      --fn "{params.fn}" \
+      --o "{output}" \
+      2>&1 | tee {log}
+    """
+  

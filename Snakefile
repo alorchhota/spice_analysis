@@ -21,7 +21,9 @@ rule all_test:
       # shared pathway auc
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_shared_pathway_auc_{pathway}.rds",
       #pathway enrichment
-      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds"],
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds",
+      # aggregate evaluations for test
+      "{results_dir}/gtex_v8/aggregated/all_evaluations_test.rds" ],
       #
         results_dir = config['results_dir'],
         tissue = config['test_tissues'],
