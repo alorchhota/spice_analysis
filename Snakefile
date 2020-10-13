@@ -21,7 +21,9 @@ rule all:
       # shared pathway auc
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_shared_pathway_auc_{pathway}.rds",
       #pathway enrichment
-      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds" ],
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds",
+      # aggregate evaluations for validation
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/aggregated_evaluations_validation.rds"],
       #
         results_dir = config['results_dir'], 
         tissue = config['validation_tissues'], 
@@ -39,3 +41,4 @@ include: "rules/string_ppi.smk"
 include: "rules/msigdb_genesets.smk"
 include: "rules/eval_interactions.smk"
 include: "rules/eval_pathways.smk"
+include: "rules/aggregate_evals.smk"
