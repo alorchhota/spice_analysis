@@ -754,7 +754,7 @@ run_spice_MP_G.7_Ra_A1 = run_spice_generic
 run_spice_MP_G.7_Rm_A1 = run_spice_generic 
 run_spice_MP_G.7_RM_A1 = run_spice_generic
 
-run_spice_generic <- function(){
+run_spice <- function(){
   spice_method = "pearson"
   frac.gene = 0.8
   rank.ties = "average"
