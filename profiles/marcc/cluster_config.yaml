@@ -24,6 +24,30 @@ run_string_ppi_spearman_cor:
 run_string_ppi_precision:
   ntasks: "{params.thread}"
   
+eval_string_kegg_ppi_auc:
+  ntasks: "{params.thread}"
+  
+eval_string_kegg_ppi_hub_auc:
+  ntasks: "{params.thread}"
+  
+eval_string_kegg_ppi_spearman_cor:
+  ntasks: "{params.thread}"
+  
+eval_string_kegg_ppi_precision:
+  ntasks: "{params.thread}"
+
+eval_inweb_ppi_auc:
+  ntasks: "{params.thread}"
+  
+eval_inweb_ppi_hub_auc:
+  ntasks: "{params.thread}"
+  
+eval_inweb_ppi_spearman_cor:
+  ntasks: "{params.thread}"
+  
+eval_inweb_ppi_precision:
+  ntasks: "{params.thread}"
+  
 eval_shared_pathway:
   ntasks: "{params.thread}"
 
@@ -31,4 +55,10 @@ eval_pathway_enrichment:
   ntasks: "{params.thread}"
 
 get_string_ppi:
+  ntasks: "{params.thread}"
+
+get_string_kegg_ppi:
+  ntasks: "{params.thread}"
+
+get_inweb_ppi:
   ntasks: "{params.thread}"

@@ -18,6 +18,26 @@ rule all_test:
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_spearman_cor.rds",
       # string ppi precision
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_precision.rds",
+      # string_kegg ppi
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/string_kegg_ppi.rds",
+      # string_kegg ppi auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_kegg_ppi_auc.rds",
+      # string_kegg ppi hub auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_kegg_ppi_hub_auc.rds",
+      # string_kegg ppi spearman cor
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_kegg_ppi_spearman_cor.rds",
+      # string_kegg ppi precision
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_kegg_ppi_precision.rds",
+      # inweb ppi
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/inweb_ppi.rds",
+      # inweb ppi auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_inweb_ppi_auc.rds",
+      # inweb ppi hub auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_inweb_ppi_hub_auc.rds",
+      # inweb ppi spearman cor
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_inweb_ppi_spearman_cor.rds",
+      # inweb ppi precision
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_inweb_ppi_precision.rds",
       # shared pathway auc
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_shared_pathway_auc_{pathway}.rds",
       #pathway enrichment
@@ -71,7 +91,10 @@ include: "rules/download_resources.smk"
 include: "rules/data_correction.smk"
 include: "rules/run_networks.smk"
 include: "rules/string_ppi.smk"
+include: "rules/inweb_ppi.smk"
 include: "rules/msigdb_genesets.smk"
 include: "rules/eval_interactions.smk"
+include: "rules/eval_string_kegg_interactions.smk"
+include: "rules/eval_inweb_interactions.smk"
 include: "rules/eval_pathways.smk"
 include: "rules/aggregate_evals.smk"

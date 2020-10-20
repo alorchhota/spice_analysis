@@ -61,3 +61,34 @@ rule get_string_ppi:
       2>&1 | tee {log}
     """
 
+rule get_string_kegg_ppi:
+  input:
+    gene_file = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/genes.txt",
+    kegg_file = "{results_dir}/shared_data/msigdb/kegg_genesets.rds",
+    dependency_ppi_file = expand("{results_dir}/shared_data/dependency_ppi_{species}.rds", results_dir = "{results_dir}", species=config['string']['species'])
+  params:
+    version = config['string']['version'],
+    species = config['string']['species'],
+    directed = "FALSE",
+    score_threshold = 0,
+    string_dir = "{results_dir}/shared_data/string",
+    norm = "TRUE",
+    thread = lambda wildcards, output: get_matrix_size_dependent_default_thread(wildcards)
+  output:
+    ppi_file = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/string_kegg_ppi.rds"
+  log: 
+    "{results_dir}/gtex_v8/logs/get_string_kegg_ppi/{correction_label}/{tissue}.{correction_label}.{gene_selection}.{n_genes}.log"
+  shell:
+    """
+    Rscript src/prepare_string_ppi_matrix.R \
+      --gene "{input.gene_file}" \
+      --version "{params.version}" \
+      --directed "{params.directed}" \
+      --species "{params.species}" \
+      --threshold "{params.score_threshold}" \
+      --dir "{params.string_dir}" \
+      --pathway "{input.kegg_file}" \
+      --norm {params.norm} \
+      --o "{output.ppi_file}" \
+      2>&1 | tee {log}
+    """
