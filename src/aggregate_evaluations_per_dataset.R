@@ -19,45 +19,49 @@ stopifnot(dir.exists(res_dir))
 stopifnot(dir.exists(dirname(out_fn)))
 
 ### read string ppi auc results
-get_string_auc_res <- function(res_fn){
+get_interaction_auc_res <- function(res_fn, interaction_label = "string"){
   if(!file.exists(res_fn)){
     return(list())
   }
   res = readRDS(res_fn)
-  res_list = list(string_aupr = res$pr$auc.integral,
-                  string_auroc = res$roc$auc)
+  res_list = list(aupr = res$pr$auc.integral,
+                  auroc = res$roc$auc)
+  names(res_list) = paste0(interaction_label, "_", names(res_list))
   return(res_list)
 }
 
 ### read string ppi hub auc results
-get_string_hub_auc_res <- function(res_fn){
+get_interaction_hub_auc_res <- function(res_fn, interaction_label = "string"){
   if(!file.exists(res_fn)){
     return(list())
   }
   res = readRDS(res_fn)
-  res_list = list(string_hub_aupr = res$pr$auc.integral,
-                  string_hub_auroc = res$roc$auc)
+  res_list = list(hub_aupr = res$pr$auc.integral,
+                  hub_auroc = res$roc$auc)
+  names(res_list) = paste0(interaction_label, "_", names(res_list))
   return(res_list)
 }
 
 ### read string ppi spearman cor
-get_string_spearman_cor_res <- function(res_fn){
+get_interaction_spearman_cor_res <- function(res_fn, interaction_label = "string"){
   if(!file.exists(res_fn)){
     return(list())
   }
   res = readRDS(res_fn)
   res_list = list(spearman_r = as.numeric(res$estimate))
+  names(res_list) = paste0(interaction_label, "_", names(res_list))
   return(res_list)
 }
 
 ### read string ppi precision
-get_string_precision <- function(res_fn){
+get_interaction_precision <- function(res_fn, interaction_label = "string"){
   if(!file.exists(res_fn)){
     return(list())
   }
   res = readRDS(res_fn)
   var_names_df = merge(rownames(res), colnames(res))
-  var_names = matrix(sprintf("string_precision_top%s_th%s", 
+  var_names = matrix(sprintf("%s_precision_top%s_th%s", 
+                               interaction_label,
                                as.character(var_names_df[,2]),  
                                as.character(var_names_df[,1])), 
                        nrow = nrow(res))
@@ -95,10 +99,54 @@ aggregated_df = NULL
 for(method in methods){
   ### aggregate all results
   all_res = unlist(list(
-    get_string_auc_res(res_fn = sprintf("%s/%s_string_ppi_auc.rds", res_dir, method)),
-    get_string_hub_auc_res(res_fn = sprintf("%s/%s_string_ppi_hub_auc.rds", res_dir, method)),
-    get_string_spearman_cor_res(res_fn = sprintf("%s/%s_string_ppi_spearman_cor.rds", res_dir, method)),
-    get_string_precision(res_fn = sprintf("%s/%s_string_ppi_precision.rds", res_dir, method)),
+    get_interaction_auc_res(
+      res_fn = sprintf("%s/%s_string_ppi_auc.rds", res_dir, method),
+      interaction_label = "string"
+    ),
+    get_interaction_hub_auc_res(
+      res_fn = sprintf("%s/%s_string_ppi_hub_auc.rds", res_dir, method),
+      interaction_label = "string"
+    ),
+    get_interaction_spearman_cor_res(
+      res_fn = sprintf("%s/%s_string_ppi_spearman_cor.rds", res_dir, method),
+      interaction_label = "string"
+    ),
+    get_interaction_precision(
+      res_fn = sprintf("%s/%s_string_ppi_precision.rds", res_dir, method),
+      interaction_label = "string"
+    ), 
+    get_interaction_auc_res(
+      res_fn = sprintf("%s/%s_string_kegg_ppi_auc.rds", res_dir, method),
+      interaction_label = "string_kegg"
+    ),
+    get_interaction_hub_auc_res(
+      res_fn = sprintf("%s/%s_string_kegg_ppi_hub_auc.rds", res_dir, method),
+      interaction_label = "string_kegg"
+    ),
+    get_interaction_spearman_cor_res(
+      res_fn = sprintf("%s/%s_string_kegg_ppi_spearman_cor.rds", res_dir, method),
+      interaction_label = "string_kegg"
+    ),
+    get_interaction_precision(
+      res_fn = sprintf("%s/%s_string_kegg_ppi_precision.rds", res_dir, method),
+      interaction_label = "string_kegg"
+    ), 
+    get_interaction_auc_res(
+      res_fn = sprintf("%s/%s_inweb_ppi_auc.rds", res_dir, method),
+      interaction_label = "inweb"
+    ),
+    get_interaction_hub_auc_res(
+      res_fn = sprintf("%s/%s_inweb_ppi_hub_auc.rds", res_dir, method),
+      interaction_label = "inweb"
+    ),
+    get_interaction_spearman_cor_res(
+      res_fn = sprintf("%s/%s_inweb_ppi_spearman_cor.rds", res_dir, method),
+      interaction_label = "inweb"
+    ),
+    get_interaction_precision(
+      res_fn = sprintf("%s/%s_inweb_ppi_precision.rds", res_dir, method),
+      interaction_label = "inweb"
+    ), 
     lapply(c("hallmark", "kegg", "biocarta", "reactome", "go"), function(pathway){
       get_shared_pathway_auc_res(
         res_fn = sprintf("%s/%s_shared_pathway_auc_%s.rds", res_dir, method, pathway),
