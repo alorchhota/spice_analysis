@@ -105,6 +105,22 @@ rule aggregate_test_eval_per_dataset:
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_kegg_ppi_spearman_cor.rds",
       # string_kegg ppi precision
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_kegg_ppi_precision.rds",
+      # string_exp ppi auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_exp_ppi_auc.rds",
+      # string_exp ppi hub auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_exp_ppi_hub_auc.rds",
+      # string_exp ppi spearman cor
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_exp_ppi_spearman_cor.rds",
+      # string_exp ppi precision
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_exp_ppi_precision.rds",
+      # kegg interaction auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_kegg_interaction_auc.rds",
+      # kegg interaction hub auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_kegg_interaction_hub_auc.rds",
+      # kegg interaction spearman cor
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_kegg_interaction_spearman_cor.rds",
+      # kegg interaction precision
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_kegg_interaction_precision.rds",
       # inweb ppi auc
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_inweb_ppi_auc.rds",
       # inweb ppi hub auc
