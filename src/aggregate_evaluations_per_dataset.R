@@ -132,6 +132,22 @@ for(method in methods){
       interaction_label = "string_kegg"
     ), 
     get_interaction_auc_res(
+      res_fn = sprintf("%s/%s_string_exp_ppi_auc.rds", res_dir, method),
+      interaction_label = "string_exp"
+    ),
+    get_interaction_hub_auc_res(
+      res_fn = sprintf("%s/%s_string_exp_ppi_hub_auc.rds", res_dir, method),
+      interaction_label = "string_exp"
+    ),
+    get_interaction_spearman_cor_res(
+      res_fn = sprintf("%s/%s_string_exp_ppi_spearman_cor.rds", res_dir, method),
+      interaction_label = "string_exp"
+    ),
+    get_interaction_precision(
+      res_fn = sprintf("%s/%s_string_exp_ppi_precision.rds", res_dir, method),
+      interaction_label = "string_exp"
+    ), 
+    get_interaction_auc_res(
       res_fn = sprintf("%s/%s_kegg_interaction_auc.rds", res_dir, method),
       interaction_label = "kegg_interaction"
     ),

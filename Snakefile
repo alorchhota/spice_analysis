@@ -18,6 +18,14 @@ rule all_validation:
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_spearman_cor.rds",
       # string ppi precision
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_precision.rds",
+      # string_exp ppi auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_exp_ppi_auc.rds",
+      # string_exp ppi hub auc
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_exp_ppi_hub_auc.rds",
+      # string_exp ppi spearman cor
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_exp_ppi_spearman_cor.rds",
+      # string_exp ppi precision
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_exp_ppi_precision.rds",
       # kegg interaction auc
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_kegg_interaction_auc.rds",
       # kegg interaction hub auc
@@ -104,6 +112,7 @@ include: "rules/inweb_ppi.smk"
 include: "rules/msigdb_genesets.smk"
 include: "rules/eval_interactions.smk"
 include: "rules/eval_string_kegg_interactions.smk"
+include: "rules/eval_string_exp_interactions.smk"
 include: "rules/eval_inweb_interactions.smk"
 include: "rules/eval_kegg_interactions.smk"
 include: "rules/eval_pathways.smk"
