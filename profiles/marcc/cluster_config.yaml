@@ -36,6 +36,30 @@ eval_string_kegg_ppi_spearman_cor:
 eval_string_kegg_ppi_precision:
   ntasks: "{params.thread}"
 
+eval_kegg_interaction_auc:
+  ntasks: "{params.thread}"
+  
+eval_kegg_interaction_hub_auc:
+  ntasks: "{params.thread}"
+  
+eval_kegg_interaction_spearman_cor:
+  ntasks: "{params.thread}"
+  
+eval_kegg_interaction_precision:
+  ntasks: "{params.thread}"
+
+eval_string_exp_ppi_auc:
+  ntasks: "{params.thread}"
+  
+eval_string_exp_ppi_hub_auc:
+  ntasks: "{params.thread}"
+  
+eval_string_exp_ppi_spearman_cor:
+  ntasks: "{params.thread}"
+  
+eval_string_exp_ppi_precision:
+  ntasks: "{params.thread}"
+
 eval_inweb_ppi_auc:
   ntasks: "{params.thread}"
   
