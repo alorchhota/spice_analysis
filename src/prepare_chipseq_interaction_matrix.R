@@ -23,6 +23,11 @@ chipseq_df = readRDS(chipseq_fn)
 ### construct chipseq matrix
 chipseq_df = chipseq_df[(chipseq_df$Target %in% genes) &
                           (chipseq_df$gene_name %in% genes), , drop = T]
+
+if(nrow(chipseq_df) == 0){
+  stop("No chip-seq interaction.")
+}
+
 chip_signal_val_mat = suppressWarnings(
   acast(
     data = chipseq_df,
