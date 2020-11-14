@@ -1,3 +1,29 @@
+def get_chip_files_for_file_aggregate_evals(wildcards, methods):
+  tis = wildcards.get('tissue')
+  chipseq_files = []
+  if tis in chipseq_tissue_map and chipseq_tissue_map[tis] != "":
+    chipseq_files = expand([# chipseq interaction auc
+                            "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_auc.rds",
+                            # chipseq interaction hub auc
+                            "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_hub_auc.rds",
+                            # chipseq interaction spearman cor
+                            "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_spearman_cor.rds",
+                            # chipseq interaction precision
+                            "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_precision.rds"],
+                            results_dir = wildcards.results_dir,
+                            chipseq_tissue = tis,
+                            correction_label = wildcards.correction_label,
+                            gene_selection = wildcards.gene_selection,
+                            n_genes = wildcards.n_genes,
+                            method = methods)
+  return chipseq_files
+
+def get_chip_files_for_rule_aggregate_validation_eval_per_dataset(wildcards):
+  return get_chip_files_for_file_aggregate_evals(wildcards, config['validation_methods'])
+
+def get_chip_files_for_rule_aggregate_test_eval_per_dataset(wildcards):
+  return get_chip_files_for_file_aggregate_evals(wildcards, config['test_methods'])
+
 rule aggregate_validation_eval_per_dataset:
   input:
     expand(
@@ -35,7 +61,8 @@ rule aggregate_validation_eval_per_dataset:
         gene_selection = "{gene_selection}", 
         n_genes = "{n_genes}", 
         method = config['validation_methods'],
-        pathway = config['pathways'])
+        pathway = config['pathways']),
+    chipseq_files = get_chip_files_for_rule_aggregate_validation_eval_per_dataset
   params:
     dir = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}",
     methods = ",".join([str(s) for s in config['validation_methods']])
@@ -139,7 +166,8 @@ rule aggregate_test_eval_per_dataset:
         gene_selection = "{gene_selection}", 
         n_genes = "{n_genes}", 
         method = config['test_methods'],
-        pathway = config['pathways'])
+        pathway = config['pathways']),
+    chipseq_files = get_chip_files_for_rule_aggregate_test_eval_per_dataset
   params:
     dir = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}",
     methods = ",".join([str(s) for s in config['test_methods']])
@@ -189,4 +217,3 @@ rule aggregate_all_test_evals:
       --o "{output}" \
       2>&1 | tee {log}
     """
-  

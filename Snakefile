@@ -1,7 +1,7 @@
 shell.prefix("module load R/4.0.2; ")  # load modules in marcc. may produce error message in other systems.
 
 configfile: "config/config.yaml"
-results_dir = config["results_dir"]
+include: "config/derived_config.smk"
 
 rule all:
   input:
@@ -45,6 +45,14 @@ rule all_validation:
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_kegg_interaction_spearman_cor.rds",
       # kegg interaction precision
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_kegg_interaction_precision.rds",
+      # chipseq interaction auc
+      "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_auc.rds",
+      # chipseq interaction hub auc
+      "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_hub_auc.rds",
+      # chipseq interaction spearman cor
+      "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_spearman_cor.rds",
+      # chipseq interaction precision
+      "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_precision.rds",
       # shared pathway auc
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_shared_pathway_auc_{pathway}.rds",
       #pathway enrichment
@@ -55,6 +63,7 @@ rule all_validation:
       #
         results_dir = config['results_dir'], 
         tissue = config['validation_tissues'], 
+        chipseq_tissue = validation_chipseq_tissues,
         correction_label = config['validation_correction_labels'], 
         gene_selection=config['validation_gene_selection'], 
         n_genes=config['validation_n_genes'], 
@@ -102,6 +111,14 @@ rule all_test:
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_kegg_interaction_spearman_cor.rds",
       # kegg interaction precision
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_kegg_interaction_precision.rds",
+      # chipseq interaction auc
+      "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_auc.rds",
+      # chipseq interaction hub auc
+      "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_hub_auc.rds",
+      # chipseq interaction spearman cor
+      "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_spearman_cor.rds",
+      # chipseq interaction precision
+      "{results_dir}/gtex_v8/results/{chipseq_tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_chipseq_interaction_precision.rds",
       # inweb ppi
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/inweb_ppi.rds",
       # inweb ppi auc
@@ -122,6 +139,7 @@ rule all_test:
       #
         results_dir = config['results_dir'],
         tissue = config['test_tissues'],
+        chipseq_tissue = test_chipseq_tissues,
         correction_label = config['test_correction_labels'],
         gene_selection=config['test_gene_selection'],
         n_genes=config['test_n_genes'],
@@ -142,5 +160,6 @@ include: "rules/eval_string_kegg_interactions.smk"
 include: "rules/eval_string_exp_interactions.smk"
 include: "rules/eval_inweb_interactions.smk"
 include: "rules/eval_kegg_interactions.smk"
+include: "rules/eval_chipseq_interactions.smk"
 include: "rules/eval_pathways.smk"
 include: "rules/aggregate_evals.smk"

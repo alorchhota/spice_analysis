@@ -48,6 +48,18 @@ eval_kegg_interaction_spearman_cor:
 eval_kegg_interaction_precision:
   ntasks: "{params.thread}"
 
+eval_chipseq_interaction_auc:
+  ntasks: "{params.thread}"
+
+eval_chipseq_interaction_hub_auc:
+  ntasks: "{params.thread}"
+
+eval_chipseq_interaction_spearman_cor:
+  ntasks: "{params.thread}"
+
+eval_chipseq_interaction_precision:
+  ntasks: "{params.thread}"
+
 eval_string_exp_ppi_auc:
   ntasks: "{params.thread}"
   

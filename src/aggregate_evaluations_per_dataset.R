@@ -164,6 +164,22 @@ for(method in methods){
       interaction_label = "kegg_interaction"
     ), 
     get_interaction_auc_res(
+      res_fn = sprintf("%s/%s_chipseq_interaction_auc.rds", res_dir, method),
+      interaction_label = "chipseq_interaction"
+    ),
+    get_interaction_hub_auc_res(
+      res_fn = sprintf("%s/%s_chipseq_interaction_hub_auc.rds", res_dir, method),
+      interaction_label = "chipseq_interaction"
+    ),
+    get_interaction_spearman_cor_res(
+      res_fn = sprintf("%s/%s_chipseq_interaction_spearman_cor.rds", res_dir, method),
+      interaction_label = "chipseq_interaction"
+    ),
+    get_interaction_precision(
+      res_fn = sprintf("%s/%s_chipseq_interaction_precision.rds", res_dir, method),
+      interaction_label = "chipseq_interaction"
+    ),
+    get_interaction_auc_res(
       res_fn = sprintf("%s/%s_inweb_ppi_auc.rds", res_dir, method),
       interaction_label = "inweb"
     ),
