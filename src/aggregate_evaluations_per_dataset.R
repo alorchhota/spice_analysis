@@ -94,6 +94,17 @@ get_pathway_enrichment_res <- function(res_fn, pathway_name){
   return(res_list)
 }
 
+### read trans-eqtl number of egenes results
+get_trans_eqtl_n_egenes_res <- function(res_fn){
+  if(!file.exists(res_fn)){
+    return(list())
+  }
+  res = readRDS(res_fn)
+  res_list = list(n_sig_egenes = as.numeric(res[["n_sig_egenes"]]))
+  return(res_list)
+}
+
+
 ### aggregate results per tissue
 aggregated_df = NULL
 for(method in methods){
@@ -204,7 +215,10 @@ for(method in methods){
       get_pathway_enrichment_res(
         res_fn = sprintf("%s/%s_pathway_enrichment_%s.rds", res_dir, method, pathway),
         pathway_name = pathway)
-    })
+    }),
+    get_trans_eqtl_n_egenes_res(
+      res_fn = sprintf("%s/%s_trans_eqtl_n_egenes.rds", res_dir, method)
+    )
   ))
   
   ### update aggregated_df

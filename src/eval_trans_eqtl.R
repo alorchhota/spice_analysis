@@ -3,13 +3,12 @@ library(miscutil)
 library(MatrixEQTL)
 library(argparser)
 library(mappabilityutil)
-require(reshape2)
+library(reshape2)
+library(flock)
 
 ##### parse arguments ######
 args <- arg_parser("program");
-args <- add_argument(args, "--net_pfx", help="network prefix (before method)", default="/work-zfs/abattle4/ashis/progres/spice_anlysis/gtex_v8/results/Muscle_Skeletal/corrected/AXPVAR/5000/")
-args <- add_argument(args, "--net_sfx", help="network suffix (after method)", default="_network.rds")
-args <- add_argument(args, "--methods", help="comma separated methods", default="pearson,spice")
+args <- add_argument(args, "--net", help="network prefix (before method)", default="/work-zfs/abattle4/ashis/progres/spice_anlysis/gtex_v8/results/Muscle_Skeletal/corrected/AXPVAR/5000/pearson_absnet.rds")
 args <- add_argument(args, "--top", help="number of top edges to evaluate tran-eqtls", default=10000)
 args <- add_argument(args, "--expr", help="expression file", default="/work-zfs/abattle4/ashis/progres/spice_anlysis/gtex_v8/data/normalized/Muscle_Skeletal.txt")
 args <- add_argument(args, "--cov", help="covariate file", default="/work-zfs/abattle4/ashis/progres/spice_anlysis/gtex_v8/data/GTEx_Analysis_v8_eQTL_covariates/Muscle_Skeletal.v8.covariates.txt")
@@ -19,12 +18,12 @@ args <- add_argument(args, "--gene_snp", help="file with gene-to-snps map", defa
 args <- add_argument(args, "--annot", help="gene annotation file (txt)", default="/work-zfs/abattle4/lab_data/annotation/gencode.v26/gencode.v26.annotation.gene.txt")
 args <- add_argument(args, "--crossmap", help="crossmapping file", default='/work-zfs/abattle4/lab_data/annotation/mappability_hg38_gencode26/hg38_cross_mappability_strength.txt')
 args <- add_argument(args, "--d", help="distance threshold for cross-mappability", default=1e6)
-args <- add_argument(args, "--out_pfx", help="output prefix", default="results/eqtls_eval")
+args <- add_argument(args, "--repo", help="repository of all tests statistics per tissue (*.rds)", default="results/repo.rds")
+args <- add_argument(args, "--max_snp", help="maximum number of snps in a matrix-eqtl call", default=10000)
+args <- add_argument(args, "--o", help="output file (*.rds)", default="results/n_egenes.rds")
 
 argv = parse_args(args)
-net_pfx = argv$net_pfx
-net_sfx = argv$net_sfx
-methods_input = argv$methods
+net_fn = argv$net
 n_top_edges = argv$top
 expr_fn = argv$expr
 cov_fn = argv$cov
@@ -34,17 +33,21 @@ gene_to_snps_fn = argv$gene_snp
 gene_annot_fn = argv$annot
 crossmap_fn = argv$crossmap
 snp_gene_dist_for_crossmap = argv$d
-out_pfx = argv$out_pfx
+repository_fn = argv$repo
+max_snp_per_meqtl = argv$max_snp
+out_fn = argv$o
 
-max_snp_per_meqtl = 10000
+repository_lock_fn = sprintf("%s.lock", repository_fn)
 
-### parse inputs
-methods = miscutil::parse_delimitted_string(methods_input, delim = ',', rm.empty = T)
+### check inputs
+stopifnot(file.exists(net_fn))
+stopifnot(endsWith(tolower(repository_fn), ".rds"))
+
+### read network
+net_mat = readRDS(net_fn)
 
 ### read expression
 expr_df = read_df(expr_fn, header = T, row.names = T)
-# rownames(expr_df) = expr_df[,'gene_id']
-# expr_df = expr_df[, 5:ncol(expr_df), drop = F]
 
 ### read covariate
 cov_df = read_df(cov_fn, header = T, row.names = T)
@@ -56,10 +59,11 @@ if(any(n_uniq<=1)){
   cov_df = cov_df[-which(rownames(cov_df) %in% const_covariates), , drop=F]
 }
 
-### read gene annotation
+### read gene annotation and filter for genes in network and expression matrix
 annot_df = read_df(gene_annot_fn, header = T, row.names = F)
 rownames(annot_df) = annot_df$gene_id
 annot_df = annot_df[annot_df$gene_id %in% rownames(expr_df), , drop = F]
+annot_df = annot_df[annot_df$gene_name %in% rownames(net_mat), , drop = F]
 sym_2_ensg = new.env(hash = T)
 tmp <- mapply(function(g,ensg){
   sym_2_ensg[[g]] <<- ensg
@@ -71,8 +75,6 @@ gene_2_snps = readRDS(gene_to_snps_fn)
 
 ### read cross-mappability data
 crossmap_df = read_df(crossmap_fn, header = F, row.names = F)
-# crossmap_df = mappabilityutil::filter_crossmap_by_genes(crossmap_df, incl.genes = rownames(expr_df)) # TODO
-# crossmap_df = mappabilityutil::directed_to_undirected_crossmap(crossmap_df, FUN = max)
 
 ### function to get top edges from a network 
 ### after filtering edges between cross-mappable genes
@@ -182,7 +184,6 @@ read_genotype_file <- function(geno_fn, na_genotype_value="-"){
   return(genotype_mat_not_in_repeat)
 }
 
-
 ### function to get rows of x that are not present in y
 ### similar to setdiff() where each row is an element of the set.
 setdiff_df <- function(x, y){
@@ -197,50 +198,54 @@ setdiff_df <- function(x, y){
   return(z)
 }
 
-### gather snp-gene pairs to test for all methods
-snp_gene_pairs_per_method = lapply(methods, function(method){
-  verbose_print(sprintf("generating snp-gene pairs for method: %s ...", method))
-  net_fn = sprintf("%s%s%s", net_pfx, method, net_sfx)
-  stopifnot(file.exists(net_fn))
-  net_mat = readRDS(net_fn)
-  verbose_print("calling top edges ...")
-  top_edges = get_top_edges(
-    weight_mat = net_mat,
-    crossmap_df = crossmap_df,
-    annot_df = annot_df,
-    n.max.edges = n_top_edges
-  )
-  verbose_print("generating snp-gene pairs ...")
-  snp_gene_pairs = get_trans_snp_gene_pairs_to_test(top_edges)
-  rm(net_mat, top_edges)
-  gc()
-  return(snp_gene_pairs)
-})
-names(snp_gene_pairs_per_method) = methods
+### gather snp-gene pairs to test
+verbose_print("extracting top edges ...")
+top_edges = get_top_edges(
+  weight_mat = net_mat,
+  crossmap_df = crossmap_df,
+  annot_df = annot_df,
+  n.max.edges = n_top_edges
+)
+verbose_print("generating snp-gene pairs ...")
+all_snp_gene_pairs = get_trans_snp_gene_pairs_to_test(top_edges)
+snp_gene_pairs_to_test = all_snp_gene_pairs
+rm(net_mat, top_edges)
+gc()
 
-snp_gene_pairs_for_all_methods = do.call(rbind, snp_gene_pairs_per_method)
-snp_gene_pairs_for_all_methods = unique(snp_gene_pairs_for_all_methods)
-# snp_gene_pairs_for_all_methods = snp_gene_pairs_for_all_methods[
-#                                    order(snp_gene_pairs_for_all_methods$snp), , drop = F]
-snp_parts = strsplit(snp_gene_pairs_for_all_methods$snp, split = "_")
+### remove already-tested snp-gene pairs
+if(file.exists(repository_fn)){
+  fl = flock::lock(repository_lock_fn)
+  tested_stats = readRDS(repository_fn)
+  flock::unlock(fl)
+  
+  tested_pairs = tested_stats[, c('snps', 'gene_name'), drop = F]
+  names(tested_pairs) = c('snp', 'gene')
+  snp_gene_pairs_to_test = setdiff_df(snp_gene_pairs_to_test, tested_pairs)
+  
+  rm(tested_stats, tested_pairs)
+  gc()
+}
+
+### add chr, pos and ensembl id
+snp_gene_pairs_to_test = unique(snp_gene_pairs_to_test)
+snp_parts = strsplit(snp_gene_pairs_to_test$snp, split = "_")
 snps_chr = sapply(snp_parts, function(x) x[1])
 snps_pos = sapply(snp_parts, function(x) as.integer(x[2]))
-snp_gene_pairs_for_all_methods$snp_chr = snps_chr # chr of snp
-snp_gene_pairs_for_all_methods$snp_pos = snps_pos # pos of snp
-gene_ensgids = sapply(snp_gene_pairs_for_all_methods$gene, function(g) sym_2_ensg[[g]])
-snp_gene_pairs_for_all_methods$ensgid = gene_ensgids # ensembl gene id
+snp_gene_pairs_to_test$snp_chr = as.character(snps_chr) # chr of snp
+snp_gene_pairs_to_test$snp_pos = as.integer(snps_pos)   # pos of snp
+gene_ensgids = sapply(snp_gene_pairs_to_test$gene, function(g) sym_2_ensg[[g]])
+snp_gene_pairs_to_test$ensgid = gene_ensgids # ensembl gene id
 
 rm(snp_parts, snps_chr, snps_pos, gene_ensgids)
 gc()
 
 # sort pairs by snp locations (chr)
 # take a batch of snps and test with target genes
-chromosomes = sort(unique(snp_gene_pairs_for_all_methods$snp_chr))
-all_eqtls = NULL
-# tested_snp_gene_pairs = NULL
+chromosomes = sort(unique(snp_gene_pairs_to_test$snp_chr))
+all_tested_eqtls = NULL
 for(chr in chromosomes){
   verbose_print(sprintf('calling trans-eqtls for snps in %s',chr))
-  chr_snp_gene_pairs = snp_gene_pairs_for_all_methods[snp_gene_pairs_for_all_methods$snp_chr == chr, , drop =F]
+  chr_snp_gene_pairs = snp_gene_pairs_to_test[snp_gene_pairs_to_test$snp_chr == chr, , drop =F]
   if(nrow(chr_snp_gene_pairs) == 0) {
     next
   }
@@ -252,7 +257,7 @@ for(chr in chromosomes){
   geno_fn = sprintf("%s%s%s", geno_pfx, chr, geno_sfx)
   geno_df = read_genotype_file(geno_fn)
   geno_df = geno_df[chr_snps, , drop = F]
-
+  
   ### 
   chr_expr_df = expr_df[chr_genes, , drop = F]
   
@@ -287,41 +292,65 @@ for(chr in chromosomes){
     
     ### filter tests not present in chr_snp_gene_pairs
     split_chr_snp_gene_pairs = chr_snp_gene_pairs[chr_snp_gene_pairs$snp %in% rownames(geno_df)[start_idx:end_idx], , drop = F]
-    target_tests_df = merge(me$all$eqtls, split_chr_snp_gene_pairs, by.x = c("snps", "gene"), by.y = c("snp", "ensgid"))
+    target_tests_df = merge(
+      me$all$eqtls,
+      split_chr_snp_gene_pairs,
+      by.x = c("snps", "gene"),
+      by.y = c("snp", "ensgid"),
+      suffixes = c(".x", ".y")
+    )
     colnames(target_tests_df) <- gsub(x = colnames(target_tests_df), pattern = sprintf("^gene.y$"), replacement = "gene_name")
     target_tests_df = target_tests_df[,-which(colnames(target_tests_df) %in% c("snp_chr", "snp_pos"))]
-    all_eqtls = rbind(all_eqtls, target_tests_df)
+    all_tested_eqtls = rbind(all_tested_eqtls, target_tests_df)
     
     rm(me, meqtl_snp_slice, split_chr_snp_gene_pairs, target_tests_df)
     gc()
   }
 }
 
-### for each method, separate the tests, perform fdr and compute #eGenes
-# all_eqtls$gene_name = annot_df[all_eqtls$gene, 'gene_name']
-n_egenes_per_method = sapply(methods, function(method){
-  verbose_print(sprintf("computing #egenes for method: %s ...", method))
-  method_snp_gene_pairs = snp_gene_pairs_per_method[[method]]
-  method_eqtls = merge(
-    all_eqtls,
-    method_snp_gene_pairs,
-    by.x = c("snps", 'gene_name'),
-    by.y = c("snp", "gene")
-  )
-  
-  n_sig_egenes = 0
-  if(nrow(method_eqtls) > 0){
-    method_eqtls$FDR = p.adjust(method_eqtls$p, method = "BH")  
-    method_sig_eqtls = method_eqtls[method_eqtls$FDR <= 0.05, , drop = F]
-    n_sig_egenes = length(method_sig_eqtls$gene)
-  }
-  return(n_sig_egenes)
-})
+### aggregate all tests
+fl = flock::lock(repository_lock_fn)
+if(file.exists(repository_fn)){
+  repo_stats = readRDS(repository_fn)
+  combined_stats = rbind(repo_stats, all_tested_eqtls)
+  is.uniq = !duplicated(combined_stats[, c("snps", "gene"), drop = F])
+  combined_stats = combined_stats[is.uniq, , drop = F]
+} else {
+  combined_stats = all_tested_eqtls
+}
+if(nrow(combined_stats) > 0){
+  combined_stats$FDR = NA
+}
+saveRDS(combined_stats, file = repository_fn)
+flock::unlock(fl)
+
+### perform fdr and compute #eGenes
+net_eqtl_stats = merge(
+  combined_stats,
+  all_snp_gene_pairs,
+  by.x = c("snps", 'gene_name'),
+  by.y = c("snp", "gene")
+)
+
+n_sig_egenes = 0
+n_sig_esnps = 0
+n_sig_eqtls = 0
+net_sig_eqtls = NULL
+if(nrow(net_eqtl_stats) > 0){
+  net_eqtl_stats$FDR = p.adjust(net_eqtl_stats$p, method = "BH")  
+  net_sig_eqtls = net_eqtl_stats[net_eqtl_stats$FDR <= 0.05, , drop = F]
+  n_sig_egenes = length(net_sig_eqtls$gene)
+  n_sig_esnps = length(net_sig_eqtls$snps)
+  n_sig_eqtls = nrow(net_sig_eqtls)
+}
 
 ### save results
-n_egene_fn = sprintf("%s_n_egenes.rds", out_pfx)
-eqtls_stats_fn = sprintf("%s_stats.rds", out_pfx)
-pairs_fn = sprintf("%s_pairs_per_method.rds", out_pfx)
-saveRDS(n_egenes_per_method, file = n_egene_fn)
-saveRDS(all_eqtls, file = eqtls_stats_fn)
-saveRDS(snp_gene_pairs_per_method, file = pairs_fn)
+res = list(
+  n_tested_pairs = nrow(net_eqtl_stats),
+  sig_eqtls = net_sig_eqtls,
+  n_sig_egenes = n_sig_egenes,
+  n_sig_esnps = n_sig_esnps,
+  n_sig_eqtls = n_sig_eqtls
+)
+saveRDS(res, file = out_fn)
+

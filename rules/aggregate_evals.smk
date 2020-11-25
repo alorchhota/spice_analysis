@@ -55,6 +55,8 @@ rule aggregate_validation_eval_per_dataset:
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_shared_pathway_auc_{pathway}.rds",
       #pathway enrichment
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds"],
+      #trans-eqtl
+      #"{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_trans_eqtl_n_egenes.rds"],
         results_dir = "{results_dir}", 
         tissue = "{tissue}", 
         correction_label = "{correction_label}", 
@@ -159,7 +161,9 @@ rule aggregate_test_eval_per_dataset:
       # shared pathway auc
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_shared_pathway_auc_{pathway}.rds",
       #pathway enrichment
-      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds"],
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_pathway_enrichment_{pathway}.rds",
+      #trans-eqtl
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_trans_eqtl_n_egenes.rds"],
         results_dir = "{results_dir}", 
         tissue = "{tissue}", 
         correction_label = "{correction_label}", 

@@ -48,7 +48,11 @@ eval_opts:
     min_gene: 5
     max_gene: 100
     iter: 10000
-    
+  trans_eqtl:
+    top_edge: 10000
+    max_cis_dist: 1000000
+    max_crossmap_d: 1000000
+    max_snp_per_run: 1000
 
 tissues: ['Adipose_Subcutaneous', 'Adipose_Visceral_Omentum', 'Adrenal_Gland',
           'Artery_Aorta', 'Artery_Coronary', 'Artery_Tibial',
@@ -209,3 +213,11 @@ chipseq_tissue_map:
   Testis: ""
   Thyroid: ""
   Vagina: ""
+
+genotype:
+  prefix: "/work-zfs/abattle4/lab_data/GTEx_v8_trans_eqtl_data_processed_by_brian/processed_genotypes/GTEx_Analysis_2017-06-05_v9_WholeGenomeSeq_838Indiv_"
+  suffix: "_dosage_MAF_05_not_in_repeat.RData"
+  chromosomes: ['chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 
+                'chr7', 'chr8', 'chr9', 'chr10', 'chr11', 'chr12',
+                'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 
+                'chr19', 'chr20', 'chr21', 'chr22', 'chrX']

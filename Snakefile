@@ -6,7 +6,7 @@ include: "config/derived_config.smk"
 rule all:
   input:
     expand(
-      [ 
+      [
         # aggregate evaluations for validation
         "{results_dir}/gtex_v8/aggregated/all_evaluations_validation.rds",
         # aggregate evaluations for test
@@ -162,4 +162,6 @@ include: "rules/eval_inweb_interactions.smk"
 include: "rules/eval_kegg_interactions.smk"
 include: "rules/eval_chipseq_interactions.smk"
 include: "rules/eval_pathways.smk"
+include: "rules/eval_trans_eqtl.smk"
 include: "rules/aggregate_evals.smk"
+

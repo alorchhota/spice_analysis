@@ -98,3 +98,10 @@ get_string_kegg_ppi:
 
 get_inweb_ppi:
   ntasks: "{params.thread}"
+
+process_snps_nearby_genes_for_trans_eqtl:
+  ntasks: "{params.thread}"
+
+eval_trans_eqtl_n_egenes:
+  time: "{params.runtime}"
+  ntasks: "{params.thread}"
