@@ -18,7 +18,8 @@ args <- add_argument(args, "--gene_snp", help="file with gene-to-snps map", defa
 args <- add_argument(args, "--annot", help="gene annotation file (txt)", default="/work-zfs/abattle4/lab_data/annotation/gencode.v26/gencode.v26.annotation.gene.txt")
 args <- add_argument(args, "--crossmap", help="crossmapping file", default='/work-zfs/abattle4/lab_data/annotation/mappability_hg38_gencode26/hg38_cross_mappability_strength.txt')
 args <- add_argument(args, "--d", help="distance threshold for cross-mappability", default=1e6)
-args <- add_argument(args, "--repo", help="repository of all tests statistics per tissue (*.rds)", default="results/repo.rds")
+args <- add_argument(args, "--repo_pfx", help="prefix (before chr) of the repository of all tests statistics", default="results/trans_eqtl_repo_")
+args <- add_argument(args, "--repo_sfx", help="suffix (after chr) of the repository of all tests statistics", default=".rds")
 args <- add_argument(args, "--max_snp", help="maximum number of snps in a matrix-eqtl call", default=10000)
 args <- add_argument(args, "--o", help="output file (*.rds)", default="results/n_egenes.rds")
 
@@ -33,15 +34,15 @@ gene_to_snps_fn = argv$gene_snp
 gene_annot_fn = argv$annot
 crossmap_fn = argv$crossmap
 snp_gene_dist_for_crossmap = argv$d
-repository_fn = argv$repo
+repository_pfx = argv$repo_pfx
+repository_sfx = argv$repo_sfx
 max_snp_per_meqtl = argv$max_snp
 out_fn = argv$o
 
-repository_lock_fn = sprintf("%s.lock", repository_fn)
-
 ### check inputs
 stopifnot(file.exists(net_fn))
-stopifnot(endsWith(tolower(repository_fn), ".rds"))
+stopifnot(file.exists(expr_fn))
+stopifnot(file.exists(cov_fn))
 
 ### read network
 net_mat = readRDS(net_fn)
@@ -206,49 +207,49 @@ top_edges = get_top_edges(
   annot_df = annot_df,
   n.max.edges = n_top_edges
 )
+
 verbose_print("generating snp-gene pairs ...")
 all_snp_gene_pairs = get_trans_snp_gene_pairs_to_test(top_edges)
-snp_gene_pairs_to_test = all_snp_gene_pairs
-rm(net_mat, top_edges)
+# snp_gene_pairs_to_test = all_snp_gene_pairs
+rm(net_mat, top_edges, crossmap_df)
 gc()
 
-### remove already-tested snp-gene pairs
-if(file.exists(repository_fn)){
-  fl = flock::lock(repository_lock_fn)
-  tested_stats = readRDS(repository_fn)
-  flock::unlock(fl)
-  
-  tested_pairs = tested_stats[, c('snps', 'gene_name'), drop = F]
-  names(tested_pairs) = c('snp', 'gene')
-  snp_gene_pairs_to_test = setdiff_df(snp_gene_pairs_to_test, tested_pairs)
-  
-  rm(tested_stats, tested_pairs)
-  gc()
-}
-
-### add chr, pos and ensembl id
-snp_gene_pairs_to_test = unique(snp_gene_pairs_to_test)
-snp_parts = strsplit(snp_gene_pairs_to_test$snp, split = "_")
-snps_chr = sapply(snp_parts, function(x) x[1])
-snps_pos = sapply(snp_parts, function(x) as.integer(x[2]))
-snp_gene_pairs_to_test$snp_chr = as.character(snps_chr) # chr of snp
-snp_gene_pairs_to_test$snp_pos = as.integer(snps_pos)   # pos of snp
-gene_ensgids = sapply(snp_gene_pairs_to_test$gene, function(g) sym_2_ensg[[g]])
-snp_gene_pairs_to_test$ensgid = gene_ensgids # ensembl gene id
-
-rm(snp_parts, snps_chr, snps_pos, gene_ensgids)
+### for each chr, take a batch of snps and test with target genes
+snp_parts = strsplit(all_snp_gene_pairs$snp, split = "_")
+all_snp_gene_pairs_snp_chr = sapply(snp_parts, function(x) x[1])
+rm(snp_parts)
 gc()
-
-# sort pairs by snp locations (chr)
-# take a batch of snps and test with target genes
-chromosomes = sort(unique(snp_gene_pairs_to_test$snp_chr))
-all_tested_eqtls = NULL
+chromosomes = sort(unique(all_snp_gene_pairs_snp_chr))
 for(chr in chromosomes){
   verbose_print(sprintf('calling trans-eqtls for snps in %s',chr))
-  chr_snp_gene_pairs = snp_gene_pairs_to_test[snp_gene_pairs_to_test$snp_chr == chr, , drop =F]
+  chr_snp_gene_pairs = all_snp_gene_pairs[all_snp_gene_pairs_snp_chr == chr, , drop =F]
+  
+  ### filter out already-tested snp-gene pairs
+  repo_fn = sprintf("%s%s%s", repository_pfx, chr, repository_sfx)
+  repo_lock_fn = sprintf("%s.lock", repo_fn)
+  if(file.exists(repo_fn)){
+    repo_lock = flock::lock(repo_lock_fn)
+    chr_tested_stats = readRDS(repo_fn)
+    flock::unlock(repo_lock)
+    
+    chr_tested_pairs = chr_tested_stats[, c('snps', 'gene_name'), drop = F]
+    names(chr_tested_pairs) = c('snp', 'gene')
+    chr_snp_gene_pairs = setdiff_df(chr_snp_gene_pairs, chr_tested_pairs)
+    
+    rm(chr_tested_stats, chr_tested_pairs)
+    gc()
+  }
+  
+  ### skip if no test required
   if(nrow(chr_snp_gene_pairs) == 0) {
     next
   }
+  
+  ### add ensembl id
+  chr_gene_ensgids = sapply(chr_snp_gene_pairs$gene, function(g) sym_2_ensg[[g]])
+  chr_snp_gene_pairs$ensgid = as.character(chr_gene_ensgids) # ensembl gene id
+  rm(chr_gene_ensgids)
+  gc()
   
   chr_snps = unique(chr_snp_gene_pairs$snp)
   chr_genes = unique(chr_snp_gene_pairs$ensgid)
@@ -258,21 +259,20 @@ for(chr in chromosomes){
   geno_df = read_genotype_file(geno_fn)
   geno_df = geno_df[chr_snps, , drop = F]
   
-  ### 
+  ### prepare expr and cov for matrix-eqtl
   chr_expr_df = expr_df[chr_genes, , drop = F]
-  
   common_samples = Reduce(intersect, list(colnames(chr_expr_df), colnames(geno_df), colnames(cov_df)))
   meqtl_expr_slice = SlicedData$new(as.matrix(chr_expr_df[,common_samples,drop=F]))
   meqtl_cov_slice = SlicedData$new(as.matrix(cov_df[,common_samples,drop=F]))
   
-  # split snps and call eqtls
+  ### split snps and call eqtls
   snp_splits = sort(unique(c(seq(max_snp_per_meqtl, nrow(geno_df), max_snp_per_meqtl), nrow(geno_df))))
   snp_splits = snp_splits[snp_splits<=nrow(geno_df)]
+  chr_tested_eqtls = NULL
   for(ss in seq_len(length(snp_splits))){
-    print(sprintf("calling matrix-eqtl for snps in %s: part %d of %d", chr, ss, length(snp_splits) ))
+    verbose_print(sprintf("calling matrix-eqtl for snps in %s: part %d of %d", chr, ss, length(snp_splits) ))
     start_idx = ifelse(ss==1, 1, snp_splits[ss-1]+1)
     end_idx = snp_splits[ss]
-    # meqtl_snp_slice = SlicedData$new(geno_df[start_idx:end_idx,,drop=F])
     meqtl_snp_slice = SlicedData$new(as.matrix(geno_df[start_idx:end_idx,common_samples,drop=F]))
     
     ### run matrix-eQTL
@@ -300,43 +300,81 @@ for(chr in chromosomes){
       suffixes = c(".x", ".y")
     )
     colnames(target_tests_df) <- gsub(x = colnames(target_tests_df), pattern = sprintf("^gene.y$"), replacement = "gene_name")
-    target_tests_df = target_tests_df[,-which(colnames(target_tests_df) %in% c("snp_chr", "snp_pos"))]
-    all_tested_eqtls = rbind(all_tested_eqtls, target_tests_df)
+    chr_tested_eqtls = rbind(chr_tested_eqtls, target_tests_df)
     
+    ### clear unnecessary variables
     rm(me, meqtl_snp_slice, split_chr_snp_gene_pairs, target_tests_df)
+    gc()
+  }
+  
+  ### add new tests in repo
+  if(!is.null(chr_tested_eqtls) && nrow(chr_tested_eqtls) > 0){
+    repo_lock = flock::lock(repo_lock_fn)
+    is.uniq = NULL
+    if(file.exists(repo_fn)){
+      repo_stats = readRDS(repo_fn)
+      combined_stats = rbind(repo_stats, chr_tested_eqtls)
+      is.uniq = !duplicated(combined_stats[, c("snps", "gene"), drop = F])
+      combined_stats = combined_stats[is.uniq, , drop = F]
+    } else {
+      combined_stats = chr_tested_eqtls
+    }
+    if(nrow(combined_stats) > 0){
+      combined_stats$FDR = NA
+    }
+    saveRDS(combined_stats, file = repo_fn)
+    flock::unlock(repo_lock)
+    
+    rm(is.uniq, combined_stats)
+  }
+  
+  ### clear unnecessary variables
+  rm(
+    chr_snp_gene_pairs,
+    chr_tested_eqtls,
+    chr_snps,
+    chr_genes,
+    geno_df,
+    chr_expr_df,
+    meqtl_expr_slice,
+    meqtl_cov_slice
+  )
+  gc()
+}
+
+### aggregate all tests
+net_eqtl_stats = NULL
+for(chr in chromosomes){
+  verbose_print(sprintf("aggregating stats of %s", chr))
+  repo_fn = sprintf("%s%s%s", repository_pfx, chr, repository_sfx)
+  repo_lock_fn = sprintf("%s.lock", repo_fn)
+  if(file.exists(repo_fn)){
+    repo_lock = flock::lock(repo_lock_fn)
+    chr_tested_stats = readRDS(repo_fn)
+    flock::unlock(repo_lock)
+    chr_snp_gene_pairs = all_snp_gene_pairs[all_snp_gene_pairs_snp_chr == chr, , drop = F]
+    chr_tested_stats = merge(
+      chr_tested_stats,
+      chr_snp_gene_pairs,
+      by.x = c("snps", 'gene_name'),
+      by.y = c("snp", "gene")
+    )
+    
+    if(nrow(chr_tested_stats) > 0){
+      net_eqtl_stats = rbind(net_eqtl_stats, chr_tested_stats)
+    }
+    
+    rm(chr_tested_stats, chr_snp_gene_pairs)
     gc()
   }
 }
 
-### aggregate all tests
-fl = flock::lock(repository_lock_fn)
-if(file.exists(repository_fn)){
-  repo_stats = readRDS(repository_fn)
-  combined_stats = rbind(repo_stats, all_tested_eqtls)
-  is.uniq = !duplicated(combined_stats[, c("snps", "gene"), drop = F])
-  combined_stats = combined_stats[is.uniq, , drop = F]
-} else {
-  combined_stats = all_tested_eqtls
-}
-if(nrow(combined_stats) > 0){
-  combined_stats$FDR = NA
-}
-saveRDS(combined_stats, file = repository_fn)
-flock::unlock(fl)
-
-### perform fdr and compute #eGenes
-net_eqtl_stats = merge(
-  combined_stats,
-  all_snp_gene_pairs,
-  by.x = c("snps", 'gene_name'),
-  by.y = c("snp", "gene")
-)
-
+### perform fdr and compute metrics
 n_sig_egenes = 0
 n_sig_esnps = 0
 n_sig_eqtls = 0
 net_sig_eqtls = NULL
-if(nrow(net_eqtl_stats) > 0){
+if(!is.null(net_eqtl_stats) && nrow(net_eqtl_stats) > 0){
   net_eqtl_stats$FDR = p.adjust(net_eqtl_stats$p, method = "BH")  
   net_sig_eqtls = net_eqtl_stats[net_eqtl_stats$FDR <= 0.05, , drop = F]
   n_sig_egenes = length(net_sig_eqtls$gene)
@@ -353,4 +391,3 @@ res = list(
   n_sig_eqtls = n_sig_eqtls
 )
 saveRDS(res, file = out_fn)
-
