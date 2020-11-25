@@ -129,10 +129,13 @@ get_top_edges <- function(weight_mat, crossmap_df, annot_df, n.max.edges = NULL)
     weight_mat[gidx, gidx] = NA
   }
   
+  ### remove edges with weight 0 (imp for sparse networks with small #edges)
+  weight_mat[weight_mat == 0] = NA
+  
   ### take top N edges
   weight_mat[lower.tri(weight_mat, diag = T)] = NA
   weights = as.numeric(weight_mat[!is.na(weight_mat)])
-  q = ifelse(is.null(n.max.edges), 0, 1-n.max.edges/length(weights))
+  q = ifelse(is.null(n.max.edges), 0, 1-min(n.max.edges, length(weights))/length(weights))
   edge.threshold = as.numeric(quantile(weights, probs = q))
   weight_mat[weight_mat < edge.threshold] = NA
   
