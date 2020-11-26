@@ -45,7 +45,7 @@ rule eval_trans_eqtl_n_egenes:
     geno_sfx = config['genotype']['suffix'],
     d = config['eval_opts']['trans_eqtl']['max_crossmap_d'],
     max_snp = config['eval_opts']['trans_eqtl']['max_snp_per_run'],
-    repo_pfx = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/trans_eqtl_repo.rds",
+    repo_pfx = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/trans_eqtl_repo_",
     repo_sfx = ".rds",
     thread = 8,
     runtime = 420
