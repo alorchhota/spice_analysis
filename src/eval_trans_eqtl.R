@@ -269,7 +269,13 @@ for(chr in chromosomes){
   meqtl_cov_slice = SlicedData$new(as.matrix(cov_df[,common_samples,drop=F]))
   
   ### split snps and call eqtls
-  snp_splits = sort(unique(c(seq(max_snp_per_meqtl, nrow(geno_df), max_snp_per_meqtl), nrow(geno_df))))
+  snp_splits = sort(unique(c(
+    seq(
+      min(max_snp_per_meqtl, nrow(geno_df)),
+      nrow(geno_df),
+      max_snp_per_meqtl
+    ), nrow(geno_df)
+  )))
   snp_splits = snp_splits[snp_splits<=nrow(geno_df)]
   chr_tested_eqtls = NULL
   for(ss in seq_len(length(snp_splits))){
