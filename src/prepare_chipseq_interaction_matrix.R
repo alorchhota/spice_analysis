@@ -48,9 +48,11 @@ chip_mat = matrix(
   ncol = length(genes),
   dimnames = list(genes, genes)
 )
+# all genes are tested against TFs, but not against non-TFs.
+# chip[TF, anyGene] = 0 or 1. chip[nonTF, nonTF] = NA.
+chip_mat[rownames(chip_signal_val_mat), ] = 0
 chip_mat[rownames(chip_signal_val_mat), colnames(chip_signal_val_mat)] = chip_signal_val_mat
 chip_mat = pmax(chip_mat, t(chip_mat), na.rm = T)
-chip_mat[is.na(chip_mat)] = 0
 
 ### save
 saveRDS(chip_mat, file = out_fn)
