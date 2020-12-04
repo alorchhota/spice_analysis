@@ -386,8 +386,8 @@ net_sig_eqtls = NULL
 if(!is.null(net_eqtl_stats) && nrow(net_eqtl_stats) > 0){
   net_eqtl_stats$FDR = p.adjust(net_eqtl_stats$p, method = "BH")  
   net_sig_eqtls = net_eqtl_stats[net_eqtl_stats$FDR <= 0.05, , drop = F]
-  n_sig_egenes = length(net_sig_eqtls$gene)
-  n_sig_esnps = length(net_sig_eqtls$snps)
+  n_sig_egenes = length(unique(net_sig_eqtls$gene))
+  n_sig_esnps = length(unique(net_sig_eqtls$snps))
   n_sig_eqtls = nrow(net_sig_eqtls)
 }
 

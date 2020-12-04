@@ -100,7 +100,19 @@ get_trans_eqtl_n_egenes_res <- function(res_fn){
     return(list())
   }
   res = readRDS(res_fn)
-  res_list = list(n_sig_egenes = as.numeric(res[["n_sig_egenes"]]))
+  n_sig_egenes = 0
+  n_sig_esnps = 0
+  n_sig_eqtls = 0
+  if(is.data.frame(res$sig_eqtls) && nrow(res$sig_eqtls) > 0){
+    n_sig_eqtls = nrow(res$sig_eqtls)
+    n_sig_egenes = length(unique(res$sig_eqtls$gene))
+    n_sig_esnps = length(unique(res$sig_eqtls$snps))
+  }
+  res_list = list(
+    n_sig_eqtls = n_sig_eqtls,
+    n_sig_egenes = n_sig_egenes,
+    n_sig_esnps = n_sig_esnps
+  )
   return(res_list)
 }
 
