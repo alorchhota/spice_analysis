@@ -29,6 +29,8 @@ rule all_validation:
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_spearman_cor.rds",
       # string ppi precision
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_precision.rds",
+      # string ppi precision
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_geodesic_rankdiff.rds",
       # string_exp ppi auc
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_exp_ppi_auc.rds",
       # string_exp ppi hub auc
@@ -95,6 +97,8 @@ rule all_test:
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_kegg_ppi_spearman_cor.rds",
       # string_kegg ppi precision
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_kegg_ppi_precision.rds",
+      # string ppi precision
+      "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_ppi_geodesic_rankdiff.rds",
       # string_exp ppi auc
       "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_string_exp_ppi_auc.rds",
       # string_exp ppi hub auc

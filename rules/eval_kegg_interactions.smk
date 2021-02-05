@@ -136,3 +136,25 @@ rule eval_kegg_interaction_precision:
       --o "{output}" \
       2>&1 | tee {log}
     """
+
+rule eval_kegg_interaction_geodesic_rankdiff:
+  input:
+    absnet="{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_absnet.rds",
+    known = "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/kegg_interaction.rds"
+  params:
+    threshold = config['eval_opts']['geodesic_rankdiff']['kegg_threshold'],
+    d = ",".join([str(s) for s in config['eval_opts']['geodesic_rankdiff']['d']])
+  output:
+    "{results_dir}/gtex_v8/results/{tissue}/{correction_label}/{gene_selection}/{n_genes}/{method}_kegg_interaction_geodesic_rankdiff.rds"
+  log:
+    "{results_dir}/gtex_v8/logs/eval_kegg_interaction_geodesic_rankdiff/{tissue}/{correction_label}/{gene_selection}/{n_genes}/kegg_interaction_geodesic_rankdiff_{method}.log"
+  shell:
+    """
+    Rscript src/eval_geodesic_rankdiff.R \
+      --net "{input.absnet}" \
+      --known "{input.known}" \
+      --threshold {params.threshold} \
+      --d "{params.d}" \
+      --o "{output}" \
+      2>&1 | tee {log}
+    """

@@ -70,6 +70,23 @@ get_interaction_precision <- function(res_fn, interaction_label = "string"){
   return(res_list)
 }
 
+### read string ppi geodesic rankdiff
+get_geodesic_rankdiff <- function(res_fn, interaction_label = "string"){
+  if(!file.exists(res_fn)){
+    return(list())
+  }
+  res = readRDS(res_fn)
+  var_names_df = merge(rownames(res), colnames(res))
+  var_names = matrix(sprintf("%s_geodesic_rankdiff_%s_%s", 
+                             interaction_label,
+                             as.character(var_names_df[,2]),  
+                             as.character(var_names_df[,1])), 
+                     nrow = nrow(res))
+  res_list = lapply(res[upper.tri(res)], function(x)x)
+  names(res_list) = var_names[upper.tri(res)]
+  return(res_list)
+}
+
 ### read shared pathway auc results
 get_shared_pathway_auc_res <- function(res_fn, pathway_name){
   if(!file.exists(res_fn)){
@@ -138,6 +155,10 @@ for(method in methods){
       res_fn = sprintf("%s/%s_string_ppi_precision.rds", res_dir, method),
       interaction_label = "string"
     ), 
+    get_geodesic_rankdiff(
+      res_fn = sprintf("%s/%s_string_ppi_geodesic_rankdiff.rds", res_dir, method),
+      interaction_label = "string"
+    ),
     get_interaction_auc_res(
       res_fn = sprintf("%s/%s_string_kegg_ppi_auc.rds", res_dir, method),
       interaction_label = "string_kegg"
@@ -154,6 +175,10 @@ for(method in methods){
       res_fn = sprintf("%s/%s_string_kegg_ppi_precision.rds", res_dir, method),
       interaction_label = "string_kegg"
     ), 
+    get_geodesic_rankdiff(
+      res_fn = sprintf("%s/%s_string_kegg_ppi_geodesic_rankdiff.rds", res_dir, method),
+      interaction_label = "string_kegg"
+    ),
     get_interaction_auc_res(
       res_fn = sprintf("%s/%s_string_exp_ppi_auc.rds", res_dir, method),
       interaction_label = "string_exp"
@@ -170,6 +195,10 @@ for(method in methods){
       res_fn = sprintf("%s/%s_string_exp_ppi_precision.rds", res_dir, method),
       interaction_label = "string_exp"
     ), 
+    get_geodesic_rankdiff(
+      res_fn = sprintf("%s/%s_string_exp_ppi_geodesic_rankdiff.rds", res_dir, method),
+      interaction_label = "string_exp"
+    ),
     get_interaction_auc_res(
       res_fn = sprintf("%s/%s_kegg_interaction_auc.rds", res_dir, method),
       interaction_label = "kegg_interaction"
@@ -186,6 +215,10 @@ for(method in methods){
       res_fn = sprintf("%s/%s_kegg_interaction_precision.rds", res_dir, method),
       interaction_label = "kegg_interaction"
     ), 
+    get_geodesic_rankdiff(
+      res_fn = sprintf("%s/%s_kegg_interaction_geodesic_rankdiff.rds", res_dir, method),
+      interaction_label = "kegg_interaction"
+    ),
     get_interaction_auc_res(
       res_fn = sprintf("%s/%s_chipseq_interaction_auc.rds", res_dir, method),
       interaction_label = "chipseq_interaction"
@@ -200,6 +233,10 @@ for(method in methods){
     ),
     get_interaction_precision(
       res_fn = sprintf("%s/%s_chipseq_interaction_precision.rds", res_dir, method),
+      interaction_label = "chipseq_interaction"
+    ),
+    get_geodesic_rankdiff(
+      res_fn = sprintf("%s/%s_chipseq_interaction_geodesic_rankdiff.rds", res_dir, method),
       interaction_label = "chipseq_interaction"
     ),
     get_interaction_auc_res(
@@ -218,6 +255,10 @@ for(method in methods){
       res_fn = sprintf("%s/%s_inweb_ppi_precision.rds", res_dir, method),
       interaction_label = "inweb"
     ), 
+    get_geodesic_rankdiff(
+      res_fn = sprintf("%s/%s_inweb_ppi_geodesic_rankdiff.rds", res_dir, method),
+      interaction_label = "inweb"
+    ),
     lapply(c("hallmark", "kegg", "biocarta", "reactome", "go"), function(pathway){
       get_shared_pathway_auc_res(
         res_fn = sprintf("%s/%s_shared_pathway_auc_%s.rds", res_dir, method, pathway),

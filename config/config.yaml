@@ -2,7 +2,7 @@ results_dir: "/work-zfs/abattle4/ashis/progres/spice_anlysis"
 gene_annot: "/work-zfs/abattle4/ashis/progdata/scnet/gtex_v8_net/misc/gencode.v26.annotation.gene.txt"
 
 # results_dir: "/Users/ashissaha/github/spice_analysis/results/spice_results"
-# gene_annot: "/Users/ashissaha/github/scnet/data/gencode.v26.annotation.gene.txt"
+# gene_annot: "/Users/ashissaha/github/annot/gencode.v26.annotation.gene.txt"
 
 crossmap_threshold: 0
 random_seed: 101
@@ -53,6 +53,11 @@ eval_opts:
     max_cis_dist: 1000000
     max_crossmap_d: 1000000
     max_snp_per_run: 1000
+  geodesic_rankdiff:
+    d: [1, 2, 3, 4, 5]
+    string_threshold: 0.7
+    inweb_threshold: 0.7
+    kegg_threshold: "0.00001"  # string to avoid auto-conversion to scientific notation
 
 tissues: ['Adipose_Subcutaneous', 'Adipose_Visceral_Omentum', 'Adrenal_Gland',
           'Artery_Aorta', 'Artery_Coronary', 'Artery_Tibial',
@@ -161,7 +166,10 @@ test_correction_labels: ["corrected"]
 test_n_genes: [5000]
 test_gene_selection: ["AXPVAR"]
 test_methods: ["et_genie3", "spice", "wgcna", "mrnetb", "aracne", "glasso_10k", "pcorr", "random", "mrnet", "pearson", "spearman", "clr", "glasso_likelihood", "glasso_5k" ]
-#test_methods: ["et_genie3", "spice", "mrnetb", "wgcna"]
+
+### for debugging
+# test_tissues: ['Brain_Cerebellum', "Lung"]
+# test_methods: ["et_genie3", "spice", "wgcna"]
 
 chipseq_tissue_map:
   Brain_Amygdala: "Brain"
