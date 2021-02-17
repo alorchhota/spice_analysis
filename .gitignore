@@ -44,3 +44,6 @@ vignettes/*.pdf
 
 # snakemake
 .snakemake/
+
+# operating system file
+.DS_Store
