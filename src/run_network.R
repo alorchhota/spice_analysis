@@ -104,6 +104,8 @@ implemented_methods = c('wgcna_pearson_unsigned_0.6', 'wgcna_pearson_unsigned_0.
                         'spice_MP_G.8_Ra_A0', 'spice_MP_G.8_Rm_A0', 'spice_MP_G.8_RM_A0', 'spice_MP_G.8_Ra_A1', 'spice_MP_G.8_Rm_A1', 'spice_MP_G.8_RM_A1',
                         'spice_MP_G.7_Ra_A0', 'spice_MP_G.7_Rm_A0', 'spice_MP_G.7_RM_A0', 'spice_MP_G.7_Ra_A1', 'spice_MP_G.7_Rm_A1', 'spice_MP_G.7_RM_A1',
                         
+                        'spice_I10_Mp_G.8_Ra_A1', 'spice_I25_Mp_G.8_Ra_A1', 'spice_I50_Mp_G.8_Ra_A1', 'spice_I150_Mp_G.8_Ra_A1', 'spice_I200_Mp_G.8_Ra_A1', 'spice_I300_Mp_G.8_Ra_A1',
+                        
                         'spice' )
 stopifnot(method %in% implemented_methods)
 
@@ -588,8 +590,29 @@ run_random <- function(){
 # 'spice_MP_G.9_Ra_A0', 'spice_MP_G.9_Rm_A0', 'spice_MP_G.9_RM_A0', 'spice_MP_G.9_Ra_A1', 'spice_MP_G.9_Rm_A1', 'spice_MP_G.9_RM_A1',
 # 'spice_MP_G.8_Ra_A0', 'spice_MP_G.8_Rm_A0', 'spice_MP_G.8_RM_A0', 'spice_MP_G.8_Ra_A1', 'spice_MP_G.8_Rm_A1', 'spice_MP_G.8_RM_A1',
 # 'spice_MP_G.7_Ra_A0', 'spice_MP_G.7_Rm_A0', 'spice_MP_G.7_RM_A0', 'spice_MP_G.7_Ra_A1', 'spice_MP_G.7_Rm_A1', 'spice_MP_G.7_RM_A1',
-
+#
+# 'spice_I10_Mp_G.8_Ra_A1', 'spice_I25_Mp_G.8_Ra_A1', 'spice_I50_Mp_G.8_Ra_A1',
+# 'spice_I150_Mp_G.8_Ra_A1', 'spice_I200_Mp_G.8_Ra_A1', 'spice_I300_Mp_G.8_Ra_A1'
 run_spice_generic <- function(){
+  iter = NULL
+  if(grepl(pattern = "_I10_", x = method, fixed = TRUE, ignore.case = FALSE)){
+    iter = 10
+  } else if(grepl(pattern = "_I25_", x = method, fixed = TRUE, ignore.case = FALSE)){
+    iter = 25
+  } else if(grepl(pattern = "_I50_", x = method, fixed = TRUE, ignore.case = FALSE)){
+    iter = 50
+  } else if(grepl(pattern = "_I100_", x = method, fixed = TRUE, ignore.case = FALSE)){
+    iter = 100
+  } else if(grepl(pattern = "_I150_", x = method, fixed = TRUE, ignore.case = FALSE)){
+    iter = 150
+  } else if(grepl(pattern = "_I200_", x = method, fixed = TRUE, ignore.case = FALSE)){
+    iter = 200
+  } else if(grepl(pattern = "_I300_", x = method, fixed = TRUE, ignore.case = FALSE)){
+    iter = 300
+  } else {
+    iter = 100
+  }
+  
   spice_method = NULL
   if(grepl(pattern = "_Mp_", x = method, fixed = TRUE, ignore.case = FALSE)){
     spice_method = "pearson"
@@ -602,7 +625,6 @@ run_spice_generic <- function(){
   } else {
     stop("spice method not implemented: check spice_method")
   }
-  
   
   frac.gene = NULL
   if(grepl(pattern = "_G1_", x = method, fixed = TRUE, ignore.case = FALSE)){
@@ -639,7 +661,7 @@ run_spice_generic <- function(){
   
   net <- spice(expr = expr_df, 
                method = spice_method, 
-               iter = 100, 
+               iter = iter,
                frac.gene = frac.gene, 
                frac.sample = 0.8, 
                n.cores = n.cores, 
@@ -753,6 +775,13 @@ run_spice_MP_G.7_RM_A0 = run_spice_generic
 run_spice_MP_G.7_Ra_A1 = run_spice_generic 
 run_spice_MP_G.7_Rm_A1 = run_spice_generic 
 run_spice_MP_G.7_RM_A1 = run_spice_generic
+
+run_spice_I10_Mp_G.8_Ra_A1 = run_spice_generic
+run_spice_I25_Mp_G.8_Ra_A1 = run_spice_generic
+run_spice_I50_Mp_G.8_Ra_A1 = run_spice_generic
+run_spice_I150_Mp_G.8_Ra_A1 = run_spice_generic
+run_spice_I200_Mp_G.8_Ra_A1 = run_spice_generic
+run_spice_I300_Mp_G.8_Ra_A1 = run_spice_generic
 
 run_spice <- function(){
   spice_method = "pearson"
