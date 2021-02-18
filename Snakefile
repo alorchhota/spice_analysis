@@ -1,4 +1,4 @@
-shell.prefix("module load R/4.0.2; ")  # load modules in marcc. may produce error message in other systems.
+shell.prefix("module load gcc; module load R/4.0.2; ")  # load modules in marcc. may produce error message in other systems.
 
 configfile: "config/config.yaml"
 include: "config/derived_config.smk"
