@@ -40,6 +40,9 @@ def select_runtime(wildcards):
     elif 'glasso' in met:
       rt = 20 * 60
     elif 'spice' in met:
+      if '_I200' in met:
+        rt = 8 * 60
+      else:
       rt = 4 * 60
   else:
     rt = 4 * 60
