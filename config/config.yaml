@@ -139,8 +139,7 @@ validation_methods: [ 'wgcna_pearson_unsigned_0.6', 'wgcna_pearson_unsigned_0.7'
                       'spice_MP_G1_Ra_A0', 'spice_MP_G1_Rm_A0', 'spice_MP_G1_RM_A0', 'spice_MP_G1_Ra_A1', 'spice_MP_G1_Rm_A1', 'spice_MP_G1_RM_A1',
                       'spice_MP_G.9_Ra_A0', 'spice_MP_G.9_Rm_A0', 'spice_MP_G.9_RM_A0', 'spice_MP_G.9_Ra_A1', 'spice_MP_G.9_Rm_A1', 'spice_MP_G.9_RM_A1',
                       'spice_MP_G.8_Ra_A0', 'spice_MP_G.8_Rm_A0', 'spice_MP_G.8_RM_A0', 'spice_MP_G.8_Ra_A1', 'spice_MP_G.8_Rm_A1', 'spice_MP_G.8_RM_A1',
-                      'spice_MP_G.7_Ra_A0', 'spice_MP_G.7_Rm_A0', 'spice_MP_G.7_RM_A0', 'spice_MP_G.7_Ra_A1', 'spice_MP_G.7_Rm_A1', 'spice_MP_G.7_RM_A1',
-                      'spice_I50_Mp_G.8_Ra_A1', 'spice_I150_Mp_G.8_Ra_A1', 'spice_I200_Mp_G.8_Ra_A1', 'spice_I300_Mp_G.8_Ra_A1' ]
+                      'spice_MP_G.7_Ra_A0', 'spice_MP_G.7_Rm_A0', 'spice_MP_G.7_RM_A0', 'spice_MP_G.7_Ra_A1', 'spice_MP_G.7_Rm_A1', 'spice_MP_G.7_RM_A1']
 
 
 test_tissues: ['Adipose_Subcutaneous', 'Adipose_Visceral_Omentum', 'Adrenal_Gland',
