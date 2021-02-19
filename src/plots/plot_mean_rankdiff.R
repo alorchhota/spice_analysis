@@ -5,7 +5,7 @@ library(data.table)
 
 args <- arg_parser("program");
 args <- add_argument(args, "--res", help="aggregate results file (*.rds)", default="results/spice_results/gtex_v8/aggregated/all_evaluations_test.rds")
-args <- add_argument(args, "--o", help="Output plot file (pdf)", default="results/debug/rankdiff_comparison.pdf")
+args <- add_argument(args, "--o", help="Output plot file (pdf)", default="results/rankdiff_comparison.pdf")
 
 ### parse args
 argv = parse_args(args)
@@ -15,8 +15,9 @@ out_fn = argv$o
 ### methods to plot
 methods = c(
   random = "Random",
-  pcorr = "Partial Cor.",
-  glasso_likelihood = "Graphical Lasso",
+  clr = "CLR",
+  pcorr = "PCor",
+  glasso_likelihood = "GLasso",
   aracne = "ARACNE",
   et_genie3 = "GENIE3",
   mrnet = "MRNET",

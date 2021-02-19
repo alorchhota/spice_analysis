@@ -134,9 +134,10 @@ plt_df$improved = factor(plt_df$improved)
 saveRDS(plt_df, file = plt_data_fn)
 
 ### plot
-pdf(plt_fn, width = 12, height = 14)
+pdf(plt_fn, width = 8, height = 10)
 plt_df[plt_df$improvement_percent >= 200, "improvement_percent"] = 200
 ggplot(data = plt_df, aes(tissue, improvement_percent)) +
+  theme_bw() +
   geom_point(aes(color=improved), show.legend = F) +
   geom_line(aes(group = pair, color = improved), show.legend = F) +
   facet_grid(metric_label ~ ., scales = "free") +
