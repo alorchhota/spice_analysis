@@ -133,6 +133,18 @@ get_trans_eqtl_n_egenes_res <- function(res_fn){
   return(res_list)
 }
 
+### read runtime
+get_runtime <- function(res_fn){
+  if(!file.exists(res_fn)){
+    return(list())
+  }
+  res = readRDS(res_fn)
+  res_list = list(user_time = as.numeric(res[1]), 
+                  system_time = as.numeric(res[2]),
+                  elapsed_time = as.numeric(res[3]))
+  return(res_list)
+}
+
 
 ### aggregate results per tissue
 aggregated_df = NULL
@@ -271,6 +283,9 @@ for(method in methods){
     }),
     get_trans_eqtl_n_egenes_res(
       res_fn = sprintf("%s/%s_trans_eqtl_n_egenes.rds", res_dir, method)
+    ),
+    get_runtime(
+      res_fn = sprintf("%s/%s_time.rds", res_dir, method)
     )
   ))
   
