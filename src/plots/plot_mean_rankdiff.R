@@ -5,25 +5,29 @@ library(data.table)
 
 args <- arg_parser("program");
 args <- add_argument(args, "--res", help="aggregate results file (*.rds)", default="results/spice_results/gtex_v8/aggregated/all_evaluations_test.rds")
-args <- add_argument(args, "--o", help="Output plot file (pdf)", default="results/rankdiff_comparison.pdf")
+args <- add_argument(args, "--o", help="Output plot data file (*.rds)", default="results/rankdiff_comparison.rds")
+args <- add_argument(args, "--plt", help="Output plot file (*.pdf)", default="results/rankdiff_comparison.pdf")
 
 ### parse args
 argv = parse_args(args)
 res_fn = argv$res
-out_fn = argv$o
+plt_data_fn = argv$o
+plt_fn = argv$plt
 
 ### methods to plot
 methods = c(
   random = "Random",
-  clr = "CLR",
   pcorr = "PCor",
   glasso_likelihood = "GLasso",
+  clr = "CLR",
   aracne = "ARACNE",
   et_genie3 = "GENIE3",
   mrnet = "MRNET",
   mrnetb = "MRNETB",
   wgcna = "WGCNA",
-  spice = "SPICE"
+  spice = "SPICE",
+  spice_Mp_G.8_Ra_A1_I200="SPICE_I200",
+  spice_Mp_G1_Ra_A1="SPICE_G1"
 )
 
 ### metrics to plot
@@ -34,9 +38,6 @@ metrics = c(string_geodesic_rankdiff_2_1 = "2-1",
 
 ### get pathways
 res_df = readRDS(res_fn)
-
-### start plots
-pdf(out_fn, width = 10, height = 6)
 
 ### plot
 available_metric_names = intersect(names(metrics), colnames(res_df))
@@ -80,6 +81,12 @@ for(metric in names(metrics)){
 
 plt_df$method = factor(plt_df$method, levels = as.character(methods))
 
+### save plot data
+saveRDS(plt_df, file = plt_data_fn)
+
+### plot
+pdf(plt_fn)
+
 p <- ggplot(plt_df, aes(x = metric, y = rankdiff_mean)) +
   theme_bw() +
   geom_bar(aes(fill = method), stat = "identity",
@@ -93,5 +100,4 @@ p <- ggplot(plt_df, aes(x = metric, y = rankdiff_mean)) +
 
 print(p)
 
-### close plots
 dev.off()
