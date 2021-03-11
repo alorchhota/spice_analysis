@@ -106,7 +106,7 @@ implemented_methods = c('wgcna_pearson_unsigned_0.6', 'wgcna_pearson_unsigned_0.
                         
                         'spice_Mp_G.8_Ra_A1_I10', 'spice_Mp_G.8_Ra_A1_I25', 'spice_Mp_G.8_Ra_A1_I50', 'spice_Mp_G.8_Ra_A1_I150', 'spice_Mp_G.8_Ra_A1_I200', 'spice_Mp_G.8_Ra_A1_I300',
                         
-                        'spice' )
+                        'spice', 'spice_c' )
 stopifnot(method %in% implemented_methods)
 
 
@@ -800,6 +800,29 @@ run_spice <- function(){
                adjust.weight = adjust.weight, 
                adjust.clr = F, 
                verbose = T, 
+               seed = seed)
+  
+  return(net)
+}
+
+run_spice_c <- function(){
+  spice_method = "pearson"
+  frac.gene = 0.8
+  rank.ties = "average"
+  adjust.weight = T
+  net <- spice(expr = expr_df,
+               method = spice_method,
+               iter = 100,
+               frac.gene = frac.gene,
+               frac.sample = 0.8,
+               n.cores = n.cores,
+               rank.types = "C",
+               rank.ties = rank.ties,
+               filter.mat = NULL,
+               weight.method = "qnorm",
+               adjust.weight = adjust.weight,
+               adjust.clr = F,
+               verbose = T,
                seed = seed)
   
   return(net)
